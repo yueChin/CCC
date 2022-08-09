@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour {
     public float speed;
-
     public float controlRotationSensitivity;
+    public LookAtCamera camera;
     
     private Body m_Body;
     private Vector3 laterDirection;
@@ -12,8 +12,18 @@ public class Controller : MonoBehaviour {
 
     private Vector3 m_Velocity;
     private Vector3 m_MoveInput;
-    protected void Awake() {
+    public Vector2 ControlRotation { get; private set; }
+    public Body Body => m_Body;
+
+    protected void Awake()
+    {
+        if (camera == null)
+        {
+            camera = FindObjectOfType<LookAtCamera>();
+        }
+        
         this.m_Body = this.GetComponent<Body>();
+
         this.laterDirection = Vector3.left;
 
         this.dashMove = new EaseMove(this.m_Body);
@@ -26,12 +36,16 @@ public class Controller : MonoBehaviour {
         {
             return;
         }
-        
-        // Calculate the move direction relative to the character's yaw rotation
-        Transform transf = m_Body.transform;
-        Quaternion yawRotation = Quaternion.Euler(0.0f, transf.rotation.y, 0.0f);
-        Vector3 forward = yawRotation * transf.forward;
-        Vector3 right = yawRotation * transf.right;
+
+        Quaternion yawRotation = Quaternion.Euler(0.0f, ControlRotation.y, 0.0f);
+        Vector3 forward = yawRotation * Vector3.forward;
+        Vector3 right = yawRotation * Vector3.right;
+        Vector3 movementInput = (forward * moveInput.y + right * moveInput.x);
+
+        if (movementInput.sqrMagnitude > 1f)
+        {
+            movementInput.Normalize();
+        }
         Vector3 movedelta = (forward * moveInput.y + right * moveInput.x);
 
         m_MoveInput = movedelta.normalized;
@@ -45,18 +59,19 @@ public class Controller : MonoBehaviour {
 
     public void SetRotationInput(Vector2 rotationInput)
     {
-        
-        Vector2 controlRotation = m_Body.GetControlRotation();
-        
         // Adjust the pitch angle (X Rotation)
-        float pitchAngle = controlRotation.x;
+        Vector3 rotation = m_Body.transform.rotation.eulerAngles;
+        float pitchAngle = rotation.x;
         pitchAngle -= rotationInput.y * controlRotationSensitivity;
+        pitchAngle %= 360.0f;
+        pitchAngle = Mathf.Clamp(pitchAngle, m_Body.rotationSettings.MinPitchAngle, m_Body.rotationSettings.MaxPitchAngle);
         
         // Adjust the yaw angle (Y Rotation)
-        float yawAngle = controlRotation.y;
+        float yawAngle = rotation.y;
         yawAngle += rotationInput.x * controlRotationSensitivity;
+        yawAngle %= 360.0f;
+        ControlRotation = new Vector2(pitchAngle, yawAngle);
         
-        controlRotation = new Vector2(pitchAngle, yawAngle);
         m_Body.SetTargetRotation();
     }
     
@@ -77,18 +92,29 @@ public class Controller : MonoBehaviour {
             this.dashMove.Enter(0.8f, 0.05f, this.laterDirection);
         }
     }
-    
-    protected void FixedUpdate() {
+
+    protected void FixedUpdate()
+    {
         this.dashMove.Update();
         this.jumpMove.Update();
 
-        if (this.m_Velocity != Vector3.zero) {
+        if (this.m_Velocity != Vector3.zero)
+        {
             this.m_Body.Move(this.m_Velocity);
             this.m_Velocity = Vector3.zero;
         }
 
-        if (this.transform.position.y < -100) {
+        if (this.transform.position.y < -100)
+        {
             this.m_Body.SetPosition(this.m_Body.LegalPosition, true);
         }
+    }
+
+    public void LateUpdate()
+    {
+        if (camera == null)
+            return;
+        camera.SetPosition(m_Body.transform.position);
+        camera.SetControlRotation(ControlRotation);
     }
 }

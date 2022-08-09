@@ -177,17 +177,17 @@ public partial class Body : MonoBehaviour {
     }
 
     private bool m_HasMoveInput;
+    private Vector3 m_MoveInput;
     private Vector3 m_LastMoveInput;
     public void Move(Vector3 velocity) {
         this.velocity += velocity;
-        
         bool hasMovementInput = velocity.sqrMagnitude > 0.0f;
 
         if (m_HasMoveInput && !hasMovementInput)
         {
-            m_LastMoveInput = this.velocity;
+            m_LastMoveInput = m_MoveInput;
         }
-
+        m_MoveInput = velocity;
         m_HasMoveInput = hasMovementInput;
     }
 
@@ -271,18 +271,13 @@ public partial class Body : MonoBehaviour {
         }
     }
 
-    public Vector2 GetControlRotation()
-    {
-        return m_ControlRotation;
-    } 
-    
-    private Vector2 m_ControlRotation;
     private float m_HorizontalSpeed;
     private float m_TargetHorizontalSpeedp;
     public void SetTargetRotation()
     {
-        Vector3 moveDir = m_HasMoveInput ? this.velocity : m_LastMoveInput;
-        if (moveDir.sqrMagnitude < 0.01)
+        Vector3 moveDir = m_HasMoveInput ? m_MoveInput : m_LastMoveInput;
+        //Debug.LogError(moveDir);
+        if (moveDir.Equals(Vector3.zero) || moveDir.sqrMagnitude < 0.01)
         {
             return;
         }
@@ -290,13 +285,15 @@ public partial class Body : MonoBehaviour {
         {
             moveDir.Normalize();
         }
-        Vector3 v3 = moveDir.SetY(0.0f) + this.velocity.y * Vector3.up;
+
+        Vector3 v3 = moveDir.SetY(0.0f);//+ this.velocity.y * Vector3.up;
         m_TargetHorizontalSpeedp = v3.magnitude * movementSettings.MaxHorizontalSpeed;
         float acceleration = m_HasMoveInput ? movementSettings.Acceleration : movementSettings.Decceleration;
 
         m_HorizontalSpeed = Mathf.MoveTowards(m_HorizontalSpeed, m_TargetHorizontalSpeedp, acceleration * Time.deltaTime);
-            
-        float rotationSpeed = Mathf.Lerp(rotationSettings.MaxRotationSpeed, rotationSettings.MinRotationSpeed, m_HorizontalSpeed / m_TargetHorizontalSpeedp);
+
+        float rotationSpeed = Mathf.Lerp(
+            rotationSettings.MaxRotationSpeed, rotationSettings.MinRotationSpeed, m_HorizontalSpeed / m_TargetHorizontalSpeedp);
 
         Quaternion targetRotation = Quaternion.LookRotation(v3, Vector3.up);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
