@@ -4,7 +4,7 @@
 using UnityEditor;
 #endif
 
-[ExecuteAlways]
+//[ExecuteAlways]
 public class SpringArm : MonoBehaviour
 {
     [Space]
@@ -73,7 +73,7 @@ public class SpringArm : MonoBehaviour
         hits = new RaycastHit[collisionTestResolution];
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         // if target is null, return from here: NullReference check
         if(!target)
@@ -91,7 +91,7 @@ public class SpringArm : MonoBehaviour
             Rotate();
         
         // follow the target applying targetOffset
-        transform.position = Vector3.SmoothDamp(transform.position, target.position + targetOffset, ref moveVelocity, movementSmoothTime);
+        transform.position = target.position + targetOffset;//Vector3.SmoothDamp(transform.position, target.position + targetOffset, ref moveVelocity, movementSmoothTime);
     }
 
 #if UNITY_EDITOR
