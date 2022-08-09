@@ -1,3 +1,5 @@
+using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class Body : MonoBehaviour {
@@ -26,6 +28,7 @@ public class Body : MonoBehaviour {
     private float groundY;
     private Vector3 direction;
 
+    //private Controller m_Controller;
     public float Gravity {
         get {
             return this.gravityMove.Power;
@@ -78,6 +81,7 @@ public class Body : MonoBehaviour {
         this.transform = this.gameObject.transform;
         this.gravityMove = new EaseMove(this);
         this.normal = Vector3.up;
+        //this.m_Controller.Init(this);
     }
 
     protected void Start() {
@@ -131,7 +135,7 @@ public class Body : MonoBehaviour {
         Vector3 offset = this.collider.center + Vector3.up * this.stepOffset;
         Vector3 size = this.collider.size * 0.5f;
         RaycastHit hit;
-
+        //Debug.LogError($"position0 :   {position}");
         position.x += this.MoveDirection(position + offset, size, velocity, 0);
         position.y += this.MoveDirection(position + offset, size, velocity, 1);
         position.z += this.MoveDirection(position + offset, size, velocity, 2);
@@ -139,9 +143,8 @@ public class Body : MonoBehaviour {
         if (velocity.x != 0 || velocity.z != 0) {
             this.direction = velocity.normalized;
         }
-
+        //Debug.LogError($"position1 :   {position}");
         bool ok = Physics.BoxCast(position + offset, size, Vector3.down, out hit, Quaternion.identity, 100);
-        
         if (ok) {
             this.IsGrounded = hit.distance <= this.stepOffset + MIN_RANGE;
             this.normal = hit.normal;
@@ -149,7 +152,6 @@ public class Body : MonoBehaviour {
 
             if (this.IsGrounded) {
                 position.y = this.groundY;
-                
                 if (hit.collider.material.bounciness > 0 && this.drop == Vector3.zero) {
                     this.drop = new Vector3(-this.direction.x, 0, -this.direction.z);
                 }
@@ -164,15 +166,69 @@ public class Body : MonoBehaviour {
             this.normal = Vector3.up;
             this.groundY = position.y;
         }
-        
-        this.SetPosition(position);
+        //Debug.LogError($"position2 :   {position}");
+        this.SetTargetPostion(position);
     }
-    
+
+    private void LateUpdate()
+    {
+        LerpTargetPosition();
+        LerpTargetRotation();
+    }
+
     public void Move(Vector3 velocity) {
         this.velocity += velocity;
     }
 
-    public void SetPosition(Vector3 position, bool adjust=false) {
+    private float m_LastPositionFixedTime;
+    private Vector3 m_TargetPostion;
+    public void SetTargetPostion(Vector3 position)
+    {
+        this.m_LastPositionFixedTime = Time.time;
+        this.m_TargetPostion = position;
+        this.LatePosition = this.transform.position;
+    }
+
+    private float m_LastRatationFixedTime;
+    private Quaternion m_TargetRotation;
+    private Quaternion m_LateRotation;
+    public void SetTargetRotation(Quaternion rotation)
+    {
+        this.m_LastRatationFixedTime = Time.time;
+        this.m_TargetRotation = rotation;
+        this.m_LateRotation = this.transform.rotation;
+    }
+    
+    public void LerpTargetPosition()
+    {
+        if (MathF.Abs((this.transform.position - m_TargetPostion).magnitude) < 0.01)
+        {
+            return;
+        }
+        //Debug.LogError($"m_TargetPostion    {m_TargetPostion}");
+        float lerp = Easing.Linear((Time.time - m_LastPositionFixedTime) / (Time.fixedDeltaTime));
+        Vector3 pos = Vector3.Lerp(this.LatePosition, m_TargetPostion, lerp);
+        //Debug.LogError($"pos {pos}  LatePosition {LatePosition}   m_TargetPostion {m_TargetPostion} ");
+        this.transform.position = pos;
+        this.velocity = Vector3.zero;
+    }
+    
+    public void LerpTargetRotation()
+    {
+        if (MathF.Abs((this.transform.position - m_TargetPostion).magnitude) < 0.01)
+        {
+            return;
+        }
+
+        float lerp = Easing.Linear((Time.time - m_LastPositionFixedTime) / (Time.fixedDeltaTime));
+        Quaternion rotation = Quaternion.Lerp(this.m_LateRotation, m_TargetRotation, lerp);
+        transform.rotation = rotation;
+        this.velocity = Vector3.zero;
+    }
+    
+    public void SetPosition(Vector3 position, bool adjust=false)
+    {
+        //Debug.LogError($"SetPosition    {position}");
         this.LatePosition = this.transform.position;
         this.transform.position = position;
         this.velocity = Vector3.zero;
