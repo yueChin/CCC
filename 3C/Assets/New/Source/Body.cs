@@ -1,13 +1,19 @@
 using System;
+using NaughtyCharacter;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class Body : MonoBehaviour {
+public partial class Body : MonoBehaviour {
     public const float MIN_RANGE = 0.01f;
 
     public float stepOffset = 0.02f;
     public float angleLimit = 45;
 
+    public Transform neck;
+
+    public RotationSettings rotationSettings;
+    public MovementSettings movementSettings;
+    
     private new BoxCollider collider;
     private new Transform transform;
 
@@ -59,11 +65,6 @@ public class Body : MonoBehaviour {
             
             return pos;
         }
-    }
-
-    public Vector3 LatePosition {
-        get;
-        protected set;
     }
 
     public Vector3 OriginPosition {
@@ -170,66 +171,52 @@ public class Body : MonoBehaviour {
         this.SetTargetPostion(position);
     }
 
-    private void LateUpdate()
+    private void Update()
     {
         LerpTargetPosition();
-        LerpTargetRotation();
     }
 
+    private bool m_HasMoveInput;
+    private Vector3 m_LastMoveInput;
     public void Move(Vector3 velocity) {
         this.velocity += velocity;
+        
+        bool hasMovementInput = velocity.sqrMagnitude > 0.0f;
+
+        if (m_HasMoveInput && !hasMovementInput)
+        {
+            m_LastMoveInput = this.velocity;
+        }
+
+        m_HasMoveInput = hasMovementInput;
     }
 
     private float m_LastPositionFixedTime;
     private Vector3 m_TargetPostion;
+    private Vector3 m_LatePosition;
     public void SetTargetPostion(Vector3 position)
     {
         this.m_LastPositionFixedTime = Time.time;
         this.m_TargetPostion = position;
-        this.LatePosition = this.transform.position;
+        this.m_LatePosition = this.transform.position;
     }
 
-    private float m_LastRatationFixedTime;
-    private Quaternion m_TargetRotation;
-    private Quaternion m_LateRotation;
-    public void SetTargetRotation(Quaternion rotation)
-    {
-        this.m_LastRatationFixedTime = Time.time;
-        this.m_TargetRotation = rotation;
-        this.m_LateRotation = this.transform.rotation;
-    }
-    
     public void LerpTargetPosition()
     {
         if (MathF.Abs((this.transform.position - m_TargetPostion).magnitude) < 0.01)
         {
             return;
         }
-        //Debug.LogError($"m_TargetPostion    {m_TargetPostion}");
         float lerp = Easing.Linear((Time.time - m_LastPositionFixedTime) / (Time.fixedDeltaTime));
-        Vector3 pos = Vector3.Lerp(this.LatePosition, m_TargetPostion, lerp);
-        //Debug.LogError($"pos {pos}  LatePosition {LatePosition}   m_TargetPostion {m_TargetPostion} ");
+        Vector3 pos = Vector3.Lerp(this.m_LatePosition, m_TargetPostion, lerp);
         this.transform.position = pos;
-        this.velocity = Vector3.zero;
-    }
-    
-    public void LerpTargetRotation()
-    {
-        if (MathF.Abs((this.transform.position - m_TargetPostion).magnitude) < 0.01)
-        {
-            return;
-        }
-
-        float lerp = Easing.Linear((Time.time - m_LastPositionFixedTime) / (Time.fixedDeltaTime));
-        Quaternion rotation = Quaternion.Lerp(this.m_LateRotation, m_TargetRotation, lerp);
-        transform.rotation = rotation;
         this.velocity = Vector3.zero;
     }
     
     public void SetPosition(Vector3 position, bool adjust=false)
     {
         //Debug.LogError($"SetPosition    {position}");
-        this.LatePosition = this.transform.position;
+        this.m_LatePosition = this.transform.position;
         this.transform.position = position;
         this.velocity = Vector3.zero;
         
@@ -283,4 +270,36 @@ public class Body : MonoBehaviour {
             this.LegalPosition = position;
         }
     }
+
+    public Vector2 GetControlRotation()
+    {
+        return m_ControlRotation;
+    } 
+    
+    private Vector2 m_ControlRotation;
+    private float m_HorizontalSpeed;
+    private float m_TargetHorizontalSpeedp;
+    public void SetTargetRotation()
+    {
+        Vector3 moveDir = m_HasMoveInput ? this.velocity : m_LastMoveInput;
+        if (moveDir.sqrMagnitude < 0.01)
+        {
+            return;
+        }
+        if (moveDir.sqrMagnitude > 1f)
+        {
+            moveDir.Normalize();
+        }
+        Vector3 v3 = moveDir.SetY(0.0f) + this.velocity.y * Vector3.up;
+        m_TargetHorizontalSpeedp = v3.magnitude * movementSettings.MaxHorizontalSpeed;
+        float acceleration = m_HasMoveInput ? movementSettings.Acceleration : movementSettings.Decceleration;
+
+        m_HorizontalSpeed = Mathf.MoveTowards(m_HorizontalSpeed, m_TargetHorizontalSpeedp, acceleration * Time.deltaTime);
+            
+        float rotationSpeed = Mathf.Lerp(rotationSettings.MaxRotationSpeed, rotationSettings.MinRotationSpeed, m_HorizontalSpeed / m_TargetHorizontalSpeedp);
+
+        Quaternion targetRotation = Quaternion.LookRotation(v3, Vector3.up);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
 }

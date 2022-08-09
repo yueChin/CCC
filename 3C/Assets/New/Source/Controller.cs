@@ -10,8 +10,8 @@ public class Controller : MonoBehaviour {
     private EaseMove dashMove;
     private EaseMove jumpMove;
 
-    private Vector3 velocity;
-
+    private Vector3 m_Velocity;
+    private Vector3 m_MoveInput;
     protected void Awake() {
         this.m_Body = this.GetComponent<Body>();
         this.laterDirection = Vector3.left;
@@ -20,42 +20,6 @@ public class Controller : MonoBehaviour {
         this.jumpMove = new EaseMove(this.m_Body);
     }
 
-    // protected void Update() {
-    //     Vector3 dir = Vector3.zero;
-    //
-    //     if (Input.GetKey(KeyCode.A)) {
-    //         dir.x = -1;
-    //     }
-    //     else if (Input.GetKey(KeyCode.D)) {
-    //         dir.x = 1;
-    //     }
-    //
-    //     if (Input.GetKey(KeyCode.W)) {
-    //         dir.z = 1;
-    //     }
-    //     else if (Input.GetKey(KeyCode.S)) {
-    //         dir.z = -1;
-    //     }
-    //
-    //     if (Input.GetKeyDown(KeyCode.LeftShift)) {
-    //         this.dashMove.Enter(0.8f, 0.05f, this.laterDirection);
-    //     }
-    //     else if (Input.GetKeyDown(KeyCode.Space)) {
-    //         this.jumpMove.Enter(0.7f, 0.02f, Vector3.up);
-    //     }
-    //
-    //     if (dir != Vector3.zero)
-    //     {
-    //         this.velocity = dir.normalized * this.speed;
-    //         this.laterDirection = dir.normalized;
-    //     }
-    // }
-
-    // public void Init(Body body)
-    // {
-    //     this.m_Body = body;
-    // }
-    
     public void SetMovementInput(Vector2 moveInput)
     {
         if (moveInput.sqrMagnitude < 0.01f)
@@ -64,39 +28,38 @@ public class Controller : MonoBehaviour {
         }
         
         // Calculate the move direction relative to the character's yaw rotation
-        Quaternion yawRotation = Quaternion.Euler(0.0f, m_Body.transform.rotation.y, 0.0f);
-        Vector3 forward = yawRotation * Vector3.forward;
-        Vector3 right = yawRotation * Vector3.right;
+        Transform transf = m_Body.transform;
+        Quaternion yawRotation = Quaternion.Euler(0.0f, transf.rotation.y, 0.0f);
+        Vector3 forward = yawRotation * transf.forward;
+        Vector3 right = yawRotation * transf.right;
         Vector3 movedelta = (forward * moveInput.y + right * moveInput.x);
-        
+
+        m_MoveInput = movedelta.normalized;
         //m_Body.SetTargetPostion(movedelta);
         if (movedelta != Vector3.zero)
         {
-            this.velocity = movedelta.normalized * this.speed;
-            this.laterDirection = movedelta.normalized;
+            this.m_Velocity = m_MoveInput * this.speed;
+            this.laterDirection = m_MoveInput;
         }
     }
 
     public void SetRotationInput(Vector2 rotationInput)
     {
-        if (rotationInput.sqrMagnitude < 0.01f)
-        {
-            return;
-        }
-        Debug.LogError(rotationInput);
-        Vector2 controlRotation = this.transform.eulerAngles;
-
+        
+        Vector2 controlRotation = m_Body.GetControlRotation();
+        
         // Adjust the pitch angle (X Rotation)
         float pitchAngle = controlRotation.x;
         pitchAngle -= rotationInput.y * controlRotationSensitivity;
-
+        
         // Adjust the yaw angle (Y Rotation)
         float yawAngle = controlRotation.y;
         yawAngle += rotationInput.x * controlRotationSensitivity;
-
+        
         controlRotation = new Vector2(pitchAngle, yawAngle);
-        m_Body.SetTargetRotation(Quaternion.Euler(controlRotation));
+        m_Body.SetTargetRotation();
     }
+    
     
     public void SetJumpInput(bool jump)
     {
@@ -119,9 +82,9 @@ public class Controller : MonoBehaviour {
         this.dashMove.Update();
         this.jumpMove.Update();
 
-        if (this.velocity != Vector3.zero) {
-            this.m_Body.Move(this.velocity);
-            this.velocity = Vector3.zero;
+        if (this.m_Velocity != Vector3.zero) {
+            this.m_Body.Move(this.m_Velocity);
+            this.m_Velocity = Vector3.zero;
         }
 
         if (this.transform.position.y < -100) {

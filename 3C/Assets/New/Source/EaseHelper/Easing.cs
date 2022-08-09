@@ -15,7 +15,7 @@ public class Easing
         return k;
     }
 
-    public class Quadratic
+    public static class Quadratic
     {
         public static float In(float k)
         {
@@ -45,7 +45,7 @@ public class Easing
         }
     };
 
-    public class Cubic
+    public static class Cubic
     {
         public static float In(float k)
         {
@@ -64,7 +64,7 @@ public class Easing
         }
     };
 
-    public class Quartic
+    public static class Quartic
     {
         public static float In(float k)
         {
@@ -83,7 +83,7 @@ public class Easing
         }
     };
 
-    public class Quintic
+    public static class Quintic
     {
         public static float In(float k)
         {
@@ -102,7 +102,7 @@ public class Easing
         }
     };
 
-    public class Sinusoidal
+    public static class Sinusoidal
     {
         public static float In(float k)
         {
@@ -120,7 +120,7 @@ public class Easing
         }
     };
 
-    public class Exponential
+    public static class Exponential
     {
         public static float In(float k)
         {
@@ -141,7 +141,7 @@ public class Easing
         }
     };
 
-    public class Circular
+    public static class Circular
     {
         public static float In(float k)
         {
@@ -160,7 +160,7 @@ public class Easing
         }
     };
 
-    public class Elastic
+    public static class Elastic
     {
         public static float In(float k)
         {
@@ -183,7 +183,7 @@ public class Easing
         }
     };
 
-    public class Back
+    public static class Back
     {
         static float s = 1.70158f;
         static float s2 = 2.5949095f;
@@ -205,7 +205,7 @@ public class Easing
         }
     };
 
-    public class Bounce
+    public static class Bounce
     {
         public static float In(float k)
         {
