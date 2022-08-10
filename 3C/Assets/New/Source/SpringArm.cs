@@ -29,7 +29,7 @@ public class SpringArm : MonoBehaviour
     [Space]
     [Header("Rotation Settings \n-----------------------")]
     [Space]
-    public bool useControlRotation = true;
+    public bool useControlRotation = false;
     public float mouseSensitivity = 500f;
 
     [Space]

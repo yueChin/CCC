@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class LookAtCamera : MonoBehaviour
@@ -10,23 +11,26 @@ public class LookAtCamera : MonoBehaviour
 
     private Vector3 m_CameraVelocity;
 
+    private Vector3 m_LastPosition;
+    private Vector2 m_LastControlRotation;
     public void SetPosition(Vector3 position)
     {
-        Rig.position = Vector3.SmoothDamp(Rig.position, position, ref m_CameraVelocity, PositionSmoothDamp);
+        m_LastPosition = position;
+        Rig.position = Vector3.SmoothDamp(Rig.position, m_LastPosition, ref m_CameraVelocity, PositionSmoothDamp);
+
     }
 
     public void SetControlRotation(Vector2 controlRotation)
     {
+        m_LastControlRotation = controlRotation;
         // Y Rotation (Yaw Rotation)
-        Quaternion rigTargetLocalRotation = Quaternion.Euler(0.0f, controlRotation.y, 0.0f);
-
+        Quaternion rigTargetLocalRotation = Quaternion.Euler(0.0f, m_LastControlRotation.y, 0.0f);
         // X Rotation (Pitch Rotation)
-        Quaternion pivotTargetLocalRotation = Quaternion.Euler(controlRotation.x, 0.0f, 0.0f);
-
+        Quaternion pivotTargetLocalRotation = Quaternion.Euler(m_LastControlRotation.x, 0.0f, 0.0f);
         if (RotationSpeed > 0.0f)
         {
-            Rig.localRotation = Quaternion.Slerp(Rig.localRotation, rigTargetLocalRotation, RotationSpeed * Time.deltaTime);
-            Pivot.localRotation = Quaternion.Slerp(Pivot.localRotation, pivotTargetLocalRotation, RotationSpeed * Time.deltaTime);
+            Rig.localRotation = Quaternion.Lerp(Rig.localRotation, rigTargetLocalRotation, RotationSpeed * Time.deltaTime);
+            Pivot.localRotation = Quaternion.Lerp(Pivot.localRotation, pivotTargetLocalRotation, RotationSpeed * Time.deltaTime);
         }
         else
         {

@@ -5,21 +5,12 @@ using UnityEngine.InputSystem;
 
 public class PlayerInput : MonoBehaviour
 {
-    public Controller controller;
 
     public Vector2 MoveInput { get; private set; }
     public Vector2 CameraInput { get; private set; }
     public bool JumpInput { get; private set; }
     
     public bool DashInput { get; private set; }
-
-    public void OnEnable()
-    {
-        if (controller == null)
-        {
-            controller = FindObjectOfType<Controller>();
-        }
-    }
 
     public void OnMoveEvent(InputAction.CallbackContext context)
     {
@@ -48,21 +39,11 @@ public class PlayerInput : MonoBehaviour
     {
         if (context.started || context.performed)
         {
-            JumpInput = true;
+            DashInput = true;
         }
         else if (context.canceled)
         {
-            JumpInput = false;
+            DashInput = false;
         }
-    }
-
-    public void Update()
-    {
-        if (controller == null)
-            return;
-        controller.SetRotationInput(CameraInput);
-        controller.SetMovementInput(MoveInput);
-        controller.SetJumpInput(JumpInput);
-        controller.SetDashInput(DashInput);
     }
 }

@@ -4,6 +4,7 @@ public class Controller : MonoBehaviour {
     public float speed;
     public float controlRotationSensitivity;
     public LookAtCamera camera;
+    public PlayerInput playerInput;
     
     private Body m_Body;
     private Vector3 laterDirection;
@@ -21,6 +22,11 @@ public class Controller : MonoBehaviour {
         {
             camera = FindObjectOfType<LookAtCamera>();
         }
+
+        if (playerInput == null)
+        {
+            playerInput = FindObjectOfType<PlayerInput>();
+        }
         
         this.m_Body = this.GetComponent<Body>();
 
@@ -36,7 +42,6 @@ public class Controller : MonoBehaviour {
         {
             return;
         }
-
         Quaternion yawRotation = Quaternion.Euler(0.0f, ControlRotation.y, 0.0f);
         Vector3 forward = yawRotation * Vector3.forward;
         Vector3 right = yawRotation * Vector3.right;
@@ -53,25 +58,24 @@ public class Controller : MonoBehaviour {
         if (movedelta != Vector3.zero)
         {
             this.m_Velocity = m_MoveInput * this.speed;
-            this.laterDirection = m_MoveInput;
+            this.laterDirection = m_Velocity;
         }
     }
 
     public void SetRotationInput(Vector2 rotationInput)
     {
         // Adjust the pitch angle (X Rotation)
-        Vector3 rotation = m_Body.transform.rotation.eulerAngles;
-        float pitchAngle = rotation.x;
+        float pitchAngle = ControlRotation.x;
         pitchAngle -= rotationInput.y * controlRotationSensitivity;
         pitchAngle %= 360.0f;
-        pitchAngle = Mathf.Clamp(pitchAngle, m_Body.rotationSettings.MinPitchAngle, m_Body.rotationSettings.MaxPitchAngle);
-        
+        pitchAngle = Mathf.Clamp(pitchAngle, -45,75);
+            
         // Adjust the yaw angle (Y Rotation)
-        float yawAngle = rotation.y;
+        float yawAngle = ControlRotation.y;
         yawAngle += rotationInput.x * controlRotationSensitivity;
         yawAngle %= 360.0f;
+
         ControlRotation = new Vector2(pitchAngle, yawAngle);
-        
         m_Body.SetTargetRotation();
     }
     
@@ -93,6 +97,14 @@ public class Controller : MonoBehaviour {
         }
     }
 
+    protected void Update()
+    {
+        SetRotationInput(playerInput.CameraInput);
+        SetMovementInput(playerInput.MoveInput);
+        SetJumpInput(playerInput.JumpInput);
+        SetDashInput(playerInput.DashInput);
+    }
+    
     protected void FixedUpdate()
     {
         this.dashMove.Update();
@@ -108,13 +120,11 @@ public class Controller : MonoBehaviour {
         {
             this.m_Body.SetPosition(this.m_Body.LegalPosition, true);
         }
-    }
-
-    public void LateUpdate()
-    {
+        
         if (camera == null)
             return;
         camera.SetPosition(m_Body.transform.position);
         camera.SetControlRotation(ControlRotation);
+        
     }
 }
