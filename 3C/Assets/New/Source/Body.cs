@@ -1,6 +1,4 @@
 using System;
-using NaughtyCharacter;
-using Unity.Mathematics;
 using UnityEngine;
 
 public partial class Body : MonoBehaviour {
