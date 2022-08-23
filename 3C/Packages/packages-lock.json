@@ -10,11 +10,10 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.cinemachine": {
-      "version": "2.8.6",
+      "version": "file:com.unity.cinemachine@2.8.6",
       "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.editorcoroutines": {
       "version": "1.0.0",
