@@ -16,7 +16,7 @@ public partial class Body : MonoBehaviour
     protected new BoxCollider m_Collider;
     protected new Transform m_Transform;
 
-    protected Vector3 m_Velocity;
+    protected Vector3 m_PhysicVelocity;
 
     protected Vector3 m_Normal;
 
@@ -41,7 +41,7 @@ public partial class Body : MonoBehaviour
         get { return this.m_GravityMove.Power; }
     }
 
-    public bool IsGrounded { get; private set; }
+    public bool IsGrounded { get; protected set; }
 
     public float GroundY
     {
@@ -86,6 +86,12 @@ public partial class Body : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
+        PhysicVelocity();
+        PhysicPostion();
+    }
+
+    protected void PhysicVelocity()
+    {
         if (!this.IsGrounded && !this.m_GravityMove.IsRunning)
         {
             this.m_GravityMove.Enter(0, -0.035f, Vector3.down);
@@ -98,7 +104,7 @@ public partial class Body : MonoBehaviour
 
         if (this.m_Drop != Vector3.zero)
         {
-            this.m_Velocity = this.IsGrounded ? this.m_Drop : this.m_Drop * 0.5f;
+            this.m_PhysicVelocity = this.IsGrounded ? this.m_Drop : this.m_Drop * 0.5f;
         }
 
         this.m_GravityMove.Update();
@@ -109,27 +115,30 @@ public partial class Body : MonoBehaviour
 
             if (angle > this.angleLimit)
             {
-                this.m_Velocity -= Vector3.ProjectOnPlane(Vector3.up, -this.Normal);
+                this.m_PhysicVelocity -= Vector3.ProjectOnPlane(Vector3.up, -this.Normal);
             }
         }
-
-        if (this.m_Velocity == Vector3.zero)
+    }
+    
+    protected void PhysicPostion()
+    {
+        if (this.m_PhysicVelocity == Vector3.zero)
         {
             return;
         }
 
         //Debug.LogError("```````````````````````````````````````````````````````````");
         //Debug.LogError(this.velocity.y + "    this    normal   " + this.normal);
-        bool isApp = Mathf.Approximately(this.m_Velocity.y, 0);
+        bool isApp = Mathf.Approximately(this.m_PhysicVelocity.y, 0);
         Vector3 velocity;
 
         if (isApp)
         {
-            velocity = Vector3.ProjectOnPlane(this.m_Velocity, this.Normal);
+            velocity = Vector3.ProjectOnPlane(this.m_PhysicVelocity, this.Normal);
         }
         else
         {
-            velocity = this.m_Velocity;
+            velocity = this.m_PhysicVelocity;
         }
 
         //Debug.LogError($"velocity        {velocity}");
@@ -148,8 +157,8 @@ public partial class Body : MonoBehaviour
         }
 
         //Debug.LogError($"position1 :   {position}");
-        bool ok = Physics.BoxCast(position + offset, size, Vector3.down, out hit, Quaternion.identity, 100);
-        if (ok)
+        bool isHit = Physics.BoxCast(position + offset, size, Vector3.down, out hit, Quaternion.identity, 100);
+        if (isHit)
         {
             this.IsGrounded = hit.distance <= this.stepOffset + MIN_RANGE;
             this.Normal = hit.normal;
@@ -179,8 +188,8 @@ public partial class Body : MonoBehaviour
         //Debug.LogError($"position2 :   {position}");
         this.SetTargetPostion(position);
     }
-
-    private void Update()
+    
+    protected virtual void Update()
     {
         LerpTargetPosition();
     }
@@ -191,7 +200,7 @@ public partial class Body : MonoBehaviour
 
     public virtual void Move(Vector3 velocity)
     {
-        this.m_Velocity += velocity;
+        this.m_PhysicVelocity += velocity;
         bool hasMovementInput = velocity.sqrMagnitude > 0.0f;
 
         if (m_HasMoveInput && !hasMovementInput)
@@ -204,27 +213,27 @@ public partial class Body : MonoBehaviour
     }
 
     protected float m_LastPositionFixedTime;
-    protected Vector3 m_TargetPostion;
+    protected Vector3 m_TargetPhysicPostion;
     protected Vector3 m_LatePosition;
 
     public virtual void SetTargetPostion(Vector3 position)
     {
         this.m_LastPositionFixedTime = Time.time;
-        this.m_TargetPostion = position;
+        this.m_TargetPhysicPostion = position;
         this.m_LatePosition = this.m_Transform.position;
     }
 
-    public virtual void LerpTargetPosition()
+    public void LerpTargetPosition()
     {
-        if (MathF.Abs((this.m_Transform.position - m_TargetPostion).magnitude) < 0.01)
+        if (MathF.Abs((this.m_Transform.position - m_TargetPhysicPostion).magnitude) < 0.01)
         {
             return;
         }
 
         float lerp = Easing.Linear((Time.time - m_LastPositionFixedTime) / (Time.fixedDeltaTime));
-        Vector3 pos = Vector3.Lerp(this.m_LatePosition, m_TargetPostion, lerp);
+        Vector3 pos = Vector3.Lerp(this.m_LatePosition, m_TargetPhysicPostion, lerp);
         this.m_Transform.position = pos;
-        this.m_Velocity = Vector3.zero;
+        this.m_PhysicVelocity = Vector3.zero;
     }
 
     public virtual void SetLegalPosition(Vector3 position, bool adjust = false)
@@ -232,7 +241,7 @@ public partial class Body : MonoBehaviour
         //Debug.LogError($"SetPosition    {position}");
         this.m_LatePosition = this.m_Transform.position;
         this.m_Transform.position = position;
-        this.m_Velocity = Vector3.zero;
+        this.m_PhysicVelocity = Vector3.zero;
 
         if (adjust)
         {
@@ -240,7 +249,7 @@ public partial class Body : MonoBehaviour
         }
     }
 
-    private float MoveDirection(Vector3 center, Vector3 size, Vector3 velocity, int index)
+    protected virtual float MoveDirection(Vector3 center, Vector3 size, Vector3 velocity, int index)
     {
         if (velocity[index] == 0)
         {
@@ -253,12 +262,12 @@ public partial class Body : MonoBehaviour
         direction[index] = velocity[index] > 0 ? 1 : -1;
         RaycastHit hit;
 
-        bool ok = Physics.BoxCast(center, size, direction, out hit, Quaternion.identity, distance);
+        bool isHit = Physics.BoxCast(center, size, direction, out hit, Quaternion.identity, distance);
 
-        return ok ? (hit.distance - MIN_RANGE) * direction[index] : velocity[index];
+        return isHit ? (hit.distance - MIN_RANGE) * direction[index] : velocity[index];
     }
 
-    private void AdjustPosition()
+    protected void AdjustPosition()
     {
         Vector3 pos = this.m_Transform.position;
         Vector3 size = this.m_Collider.size;
@@ -284,7 +293,7 @@ public partial class Body : MonoBehaviour
         }
     }
 
-    private void CheckLegalPosition(RaycastHit hit, Vector3 position)
+    protected void CheckLegalPosition(RaycastHit hit, Vector3 position)
     {
         float angle = Vector3.Angle(Vector3.up, hit.normal);
 
