@@ -1,0 +1,334 @@
+﻿using System;
+using UnityEngine;
+
+public partial class Body : MonoBehaviour
+{
+    public const float MIN_RANGE = 0.01f;
+
+    public float stepOffset = 0.02f;
+    public float angleLimit = 45;
+
+    public Transform neck;
+
+    public RotationSettings rotationSettings;
+    public MovementSettings movementSettings;
+
+    protected new BoxCollider m_Collider;
+    protected new Transform m_Transform;
+
+    protected Vector3 m_Velocity;
+
+    protected Vector3 m_Normal;
+
+    protected Vector3 Normal
+    {
+        get => m_Normal;
+        set
+        {
+            //Debug.LogError($"设置   {value}");
+            m_Normal = value;
+        }
+    }
+
+    protected Vector3 m_Drop;
+    protected EaseMove m_GravityMove;
+    protected float m_GroundY;
+    protected Vector3 m_Direction;
+
+    //private Controller m_Controller;
+    public float Gravity
+    {
+        get { return this.m_GravityMove.Power; }
+    }
+
+    public bool IsGrounded { get; private set; }
+
+    public float GroundY
+    {
+        get { return this.IsGrounded ? this.m_Transform.position.y : this.m_GroundY; }
+    }
+
+    public float High
+    {
+        get { return this.m_Transform.position.y - this.GroundY; }
+    }
+
+    public Vector3 GroundPosition
+    {
+        get
+        {
+            Vector3 pos = this.m_Transform.position;
+            pos.y = this.GroundY;
+
+            return pos;
+        }
+    }
+
+    public Vector3 OriginPosition { get; protected set; }
+
+    public Vector3 LegalPosition { get; protected set; }
+
+    protected virtual void Awake()
+    {
+        this.m_Collider = this.GetComponent<BoxCollider>();
+        this.m_Transform = this.gameObject.transform;
+        this.m_GravityMove = new EaseMove(this);
+        this.Normal = Vector3.up;
+        //this.m_Controller.Init(this);
+    }
+
+    protected virtual void Start()
+    {
+        this.LegalPosition = this.m_Transform.position;
+        this.AdjustPosition();
+        this.OriginPosition = this.m_Transform.position;
+    }
+
+    protected virtual void FixedUpdate()
+    {
+        if (!this.IsGrounded && !this.m_GravityMove.IsRunning)
+        {
+            this.m_GravityMove.Enter(0, -0.035f, Vector3.down);
+        }
+        else if (this.IsGrounded && this.m_GravityMove.IsRunning)
+        {
+            this.m_GravityMove.Exit();
+            this.m_GravityMove.Power = 0;
+        }
+
+        if (this.m_Drop != Vector3.zero)
+        {
+            this.m_Velocity = this.IsGrounded ? this.m_Drop : this.m_Drop * 0.5f;
+        }
+
+        this.m_GravityMove.Update();
+
+        if (this.IsGrounded)
+        {
+            float angle = Vector3.Angle(Vector3.up, this.Normal);
+
+            if (angle > this.angleLimit)
+            {
+                this.m_Velocity -= Vector3.ProjectOnPlane(Vector3.up, -this.Normal);
+            }
+        }
+
+        if (this.m_Velocity == Vector3.zero)
+        {
+            return;
+        }
+
+        //Debug.LogError("```````````````````````````````````````````````````````````");
+        //Debug.LogError(this.velocity.y + "    this    normal   " + this.normal);
+        bool isApp = Mathf.Approximately(this.m_Velocity.y, 0);
+        Vector3 velocity;
+
+        if (isApp)
+        {
+            velocity = Vector3.ProjectOnPlane(this.m_Velocity, this.Normal);
+        }
+        else
+        {
+            velocity = this.m_Velocity;
+        }
+
+        //Debug.LogError($"velocity        {velocity}");
+        Vector3 position = this.m_Transform.position;
+        Vector3 offset = this.m_Collider.center + Vector3.up * this.stepOffset;
+        Vector3 size = this.m_Collider.size * 0.5f;
+        RaycastHit hit;
+        //Debug.LogError($"position0 :   {position}");
+        position.x += this.MoveDirection(position + offset, size, velocity, 0);
+        position.y += this.MoveDirection(position + offset, size, velocity, 1);
+        position.z += this.MoveDirection(position + offset, size, velocity, 2);
+
+        if (velocity.x != 0 || velocity.z != 0)
+        {
+            this.m_Direction = velocity.normalized;
+        }
+
+        //Debug.LogError($"position1 :   {position}");
+        bool ok = Physics.BoxCast(position + offset, size, Vector3.down, out hit, Quaternion.identity, 100);
+        if (ok)
+        {
+            this.IsGrounded = hit.distance <= this.stepOffset + MIN_RANGE;
+            this.Normal = hit.normal;
+            this.m_GroundY = hit.point.y + MIN_RANGE;
+
+            if (this.IsGrounded)
+            {
+                position.y = this.m_GroundY;
+                if (hit.collider.material.bounciness > 0 && this.m_Drop == Vector3.zero)
+                {
+                    this.m_Drop = new Vector3(-this.m_Direction.x, 0, -this.m_Direction.z);
+                }
+                else if (hit.collider.material.bounciness == 0)
+                {
+                    this.m_Drop = Vector3.zero;
+                    this.CheckLegalPosition(hit, position);
+                }
+            }
+        }
+        else
+        {
+            this.IsGrounded = false;
+            this.Normal = Vector3.up;
+            this.m_GroundY = position.y;
+        }
+
+        //Debug.LogError($"position2 :   {position}");
+        this.SetTargetPostion(position);
+    }
+
+    private void Update()
+    {
+        LerpTargetPosition();
+    }
+
+    protected bool m_HasMoveInput;
+    protected Vector3 m_MoveInput;
+    protected Vector3 m_LastMoveInput;
+
+    public virtual void Move(Vector3 velocity)
+    {
+        this.m_Velocity += velocity;
+        bool hasMovementInput = velocity.sqrMagnitude > 0.0f;
+
+        if (m_HasMoveInput && !hasMovementInput)
+        {
+            m_LastMoveInput = m_MoveInput;
+        }
+
+        m_MoveInput = velocity;
+        m_HasMoveInput = hasMovementInput;
+    }
+
+    protected float m_LastPositionFixedTime;
+    protected Vector3 m_TargetPostion;
+    protected Vector3 m_LatePosition;
+
+    public virtual void SetTargetPostion(Vector3 position)
+    {
+        this.m_LastPositionFixedTime = Time.time;
+        this.m_TargetPostion = position;
+        this.m_LatePosition = this.m_Transform.position;
+    }
+
+    public virtual void LerpTargetPosition()
+    {
+        if (MathF.Abs((this.m_Transform.position - m_TargetPostion).magnitude) < 0.01)
+        {
+            return;
+        }
+
+        float lerp = Easing.Linear((Time.time - m_LastPositionFixedTime) / (Time.fixedDeltaTime));
+        Vector3 pos = Vector3.Lerp(this.m_LatePosition, m_TargetPostion, lerp);
+        this.m_Transform.position = pos;
+        this.m_Velocity = Vector3.zero;
+    }
+
+    public virtual void SetLegalPosition(Vector3 position, bool adjust = false)
+    {
+        //Debug.LogError($"SetPosition    {position}");
+        this.m_LatePosition = this.m_Transform.position;
+        this.m_Transform.position = position;
+        this.m_Velocity = Vector3.zero;
+
+        if (adjust)
+        {
+            this.AdjustPosition();
+        }
+    }
+
+    private float MoveDirection(Vector3 center, Vector3 size, Vector3 velocity, int index)
+    {
+        if (velocity[index] == 0)
+        {
+            return 0;
+        }
+
+        //Debug.LogError(velocity[index] + "               " + index);
+        float distance = Mathf.Abs(velocity[index]);
+        Vector3 direction = new Vector3();
+        direction[index] = velocity[index] > 0 ? 1 : -1;
+        RaycastHit hit;
+
+        bool ok = Physics.BoxCast(center, size, direction, out hit, Quaternion.identity, distance);
+
+        return ok ? (hit.distance - MIN_RANGE) * direction[index] : velocity[index];
+    }
+
+    private void AdjustPosition()
+    {
+        Vector3 pos = this.m_Transform.position;
+        Vector3 size = this.m_Collider.size;
+        Vector3 center = pos + this.m_Collider.center + Vector3.up * size.y;
+        RaycastHit hit;
+        bool ok = Physics.BoxCast(center, size, Vector3.down, out hit, Quaternion.identity, size.y);
+
+        if (ok)
+        {
+            this.Normal = hit.normal;
+            this.m_GroundY = pos.y;
+            this.IsGrounded = true;
+
+            pos.y = hit.point.y + MIN_RANGE;
+            this.m_Transform.position = pos;
+            this.CheckLegalPosition(hit, pos);
+        }
+        else
+        {
+            this.Normal = Vector3.up;
+            this.m_GroundY = this.m_Transform.position.y;
+            this.IsGrounded = false;
+        }
+    }
+
+    private void CheckLegalPosition(RaycastHit hit, Vector3 position)
+    {
+        float angle = Vector3.Angle(Vector3.up, hit.normal);
+
+        if (angle <= this.angleLimit)
+        {
+            this.LegalPosition = position;
+        }
+    }
+
+    protected float m_HorizontalSpeed;
+    protected float m_TargetHorizontalSpeedp;
+
+    public virtual void SetTargetRotation()
+    {
+        Vector3 movementInput = m_MoveInput;
+        if (movementInput.sqrMagnitude > 1.0f)
+        {
+            movementInput.Normalize();
+        }
+
+        m_TargetHorizontalSpeedp = movementInput.magnitude * movementSettings.MaxHorizontalSpeed;
+        float acceleration = m_HasMoveInput ? movementSettings.Acceleration : movementSettings.Decceleration;
+
+        m_HorizontalSpeed = Mathf.MoveTowards(m_HorizontalSpeed, m_TargetHorizontalSpeedp, acceleration * Time.deltaTime);
+
+        Vector3 moveDir = m_HasMoveInput ? m_MoveInput : m_LastMoveInput;
+        if (moveDir.sqrMagnitude > 1f)
+        {
+            moveDir.Normalize();
+        }
+        //Debug.LogError(moveDir);
+        // if (moveDir.Equals(Vector3.zero) || moveDir.sqrMagnitude < 0.01)
+        // {
+        //     return;
+        // }
+
+        Vector3 horizontalMovement = moveDir.SetY(0.0f); //+ this.velocity.y * Vector3.up;
+        if (horizontalMovement.sqrMagnitude < 0.01f)
+            return;
+
+        float rotationSpeed = Mathf.Lerp(rotationSettings.MaxRotationSpeed, rotationSettings.MinRotationSpeed, m_HorizontalSpeed / m_TargetHorizontalSpeedp);
+
+        Quaternion targetRotation = Quaternion.LookRotation(horizontalMovement, Vector3.up);
+        m_Transform.rotation = Quaternion.RotateTowards(m_Transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+    }
+}
