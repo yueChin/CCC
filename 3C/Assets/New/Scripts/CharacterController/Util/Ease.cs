@@ -1,46 +1,55 @@
-public class Ease : Gear {
-    public float from;
-    public float to;
-    public float current;
-    public float speed;
-    public int direction;
-    public bool isRound;
+public class Ease : Gear
+{
+    public float From;
+    public float To;
+    public float Current;
+    public float EaseDelta;
+    public int EaseFwdDirection;
+    public bool IsRound;
 
-    public float Progress {
-        get {
-            float v = this.from < this.to ? this.to : this.from;
+    public float Progress
+    {
+        get
+        {
+            float v = this.From < this.To ? this.To : this.From;
 
-            return this.current / v;
+            return this.Current / v;
         }
     }
 
-    public void Update(float rate=1) {
-        if (!this.IsRunning) {
+    public void Update(float rate = 1)
+    {
+        if (!this.IsRunning)
+        {
             return;
         }
 
-        this.current += this.speed * this.direction * rate;
+        this.Current += this.EaseDelta * this.EaseFwdDirection * rate;
 
-        if (this.speed > 0 && ((this.direction == 1 && this.current >= this.to) || (this.direction == -1 && this.current <= this.to))) {
-            this.current = this.to;
+        if (this.EaseDelta > 0 && ((this.EaseFwdDirection == 1 && this.Current >= this.To) || (this.EaseFwdDirection == -1 && this.Current <= this.To)))
+        {
+            this.Current = this.To;
 
-            if (this.isRound) {
-                this.Enter(this.to, this.from, this.speed, this.isRound);
+            if (this.IsRound)
+            {
+                this.Enter(this.To, this.From, this.EaseDelta, this.IsRound);
             }
-            else {
+            else
+            {
                 this.Exit();
             }
         }
     }
 
-    public void Enter(float from, float to, float speed, bool isRound=false) {
+    public void Enter(float from, float to, float easeDelta, bool isRound = false)
+    {
         base.Enter();
-        
-        this.from = from;
-        this.to = to;
-        this.current = from;
-        this.speed = speed;
-        this.isRound = isRound;
-        this.direction = this.from < this.to ? 1 : -1;
+
+        this.From = from;
+        this.To = to;
+        this.Current = from;
+        this.EaseDelta = easeDelta;
+        this.IsRound = isRound;
+        this.EaseFwdDirection = this.From < this.To ? 1 : -1;
     }
 }

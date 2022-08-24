@@ -10,8 +10,8 @@ public class Controller : MonoBehaviour
 
     private Body m_Body;
     private Vector3 laterDirection;
-    private EaseMove dashMove;
-    private EaseMove jumpMove;
+    private CustomEaseMove dashMove;
+    private CustomEaseMove jumpMove;
 
     private Vector3 m_Velocity;
     private Vector3 m_MoveInput;
@@ -34,8 +34,8 @@ public class Controller : MonoBehaviour
 
         this.laterDirection = Vector3.left;
 
-        this.dashMove = new EaseMove(this.m_Body);
-        this.jumpMove = new EaseMove(this.m_Body);
+        this.dashMove = new CustomEaseMove(this.m_Body);
+        this.jumpMove = new CustomEaseMove(this.m_Body);
     }
 
     public void SetMovementInput(Vector2 moveInput)
@@ -111,8 +111,8 @@ public class Controller : MonoBehaviour
 
     protected void FixedUpdate()
     {
-        this.dashMove.Update();
-        this.jumpMove.Update();
+        this.dashMove.FixedUpdate();
+        this.jumpMove.FixedUpdate();
 
         if (this.m_Velocity != Vector3.zero)
         {

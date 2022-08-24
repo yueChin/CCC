@@ -8,25 +8,46 @@ public class CMBody : Body
 
     private Vector3 m_Velocity;
 
-    // protected override void FixedUpdate()
-    // {
-    //     //base.FixedUpdate();
-    // }
+    private WorldRule m_WorldRule;
 
-    // protected override void Update()
-    // {
-    //     float dt = Time.deltaTime;
-    //     Vector3 deltaVel = m_MoveInput - m_Velocity;
-    //     m_Velocity += Damper.Damp(deltaVel, VelocityDamping, dt);
-    //     transform.position += m_Velocity * dt;
-    // }
+    protected override void Awake()
+    {
+        base.Awake();
+        if (m_WorldRule == null)
+        {
+            m_WorldRule = FindObjectOfType<WorldRule>();
+        }
 
-    public override void Move(Vector3 velocityInput)
+        if (m_WorldRule != null)
+        {
+            m_WorldRule.SetActiveBody(this);
+        }
+    }
+
+    protected override void FixedUpdate()
+    {
+        GravtyUpdate();
+        base.FixedUpdate();
+    }
+
+    private void GravtyUpdate()
+    {
+        if (!this.IsGrounded )
+        {
+            m_WorldRule.ActiveBody(this);
+        }
+        else if (this.IsGrounded)
+        {
+            m_WorldRule.NegtiveBody(this);
+        }
+        Move(m_WorldRule.GetGravity(this));
+    }
+    
+    public void InputMove(Vector3 velocityInput)
     {
         float fdt = Time.fixedDeltaTime;
         Vector3 deltaVel = velocityInput - m_Velocity;
         m_Velocity += Damper.Damp(deltaVel, VelocityDamping, fdt);
-        
         this.m_PhysicVelocity += m_Velocity * fdt;
         bool hasMovementInput = velocityInput.sqrMagnitude > 0.0f;
 
@@ -37,5 +58,10 @@ public class CMBody : Body
 
         m_MoveInput = velocityInput;
         m_HasMoveInput = hasMovementInput;
+    }
+    
+    public override void Move(Vector3 velocityDelta)
+    {
+        this.m_PhysicVelocity += velocityDelta;
     }
 }

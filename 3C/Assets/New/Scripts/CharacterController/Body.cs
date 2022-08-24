@@ -31,15 +31,11 @@ public partial class Body : MonoBehaviour
     }
 
     protected Vector3 m_Drop;
-    protected EaseMove m_GravityMove;
     protected float m_GroundY;
     protected Vector3 m_Direction;
 
     //private Controller m_Controller;
-    public float Gravity
-    {
-        get { return this.m_GravityMove.Power; }
-    }
+
 
     public bool IsGrounded { get; protected set; }
 
@@ -72,7 +68,6 @@ public partial class Body : MonoBehaviour
     {
         this.m_Collider = this.GetComponent<BoxCollider>();
         this.m_Transform = this.gameObject.transform;
-        this.m_GravityMove = new EaseMove(this);
         this.Normal = Vector3.up;
         //this.m_Controller.Init(this);
     }
@@ -92,22 +87,10 @@ public partial class Body : MonoBehaviour
 
     protected void PhysicVelocity()
     {
-        if (!this.IsGrounded && !this.m_GravityMove.IsRunning)
-        {
-            this.m_GravityMove.Enter(0, -0.035f, Vector3.down);
-        }
-        else if (this.IsGrounded && this.m_GravityMove.IsRunning)
-        {
-            this.m_GravityMove.Exit();
-            this.m_GravityMove.Power = 0;
-        }
-
         if (this.m_Drop != Vector3.zero)
         {
             this.m_PhysicVelocity = this.IsGrounded ? this.m_Drop : this.m_Drop * 0.5f;
         }
-
-        this.m_GravityMove.Update();
 
         if (this.IsGrounded)
         {
@@ -184,7 +167,6 @@ public partial class Body : MonoBehaviour
             this.Normal = Vector3.up;
             this.m_GroundY = position.y;
         }
-
         //Debug.LogError($"position2 :   {position}");
         this.SetTargetPostion(position);
     }

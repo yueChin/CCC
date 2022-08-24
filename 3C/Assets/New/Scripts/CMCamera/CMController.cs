@@ -1,4 +1,5 @@
 using System;
+using Cinemachine.Utility;
 using UnityEngine;
 
 public class CMController : MonoBehaviour
@@ -10,11 +11,11 @@ public class CMController : MonoBehaviour
     public ForwardMode InputForward;
     
     private CMBody m_Body;
-    private Vector3 laterDirection;
-    private EaseMove dashMove;
-    private EaseMove jumpMove;
+    private Vector3 m_LaterDirection;
+    private CMEaseMove m_DashMove;
+    private CMEaseMove m_JumpMove;
 
-    private Vector3 m_Velocity;
+    private Vector3 m_InputVelocity;
     private Vector3 m_MoveInput;
     public Vector2 ControlRotation { get; private set; }
     public CMBody Body => m_Body;
@@ -28,10 +29,10 @@ public class CMController : MonoBehaviour
 
         this.m_Body = this.GetComponent<CMBody>();
 
-        this.laterDirection = Vector3.left;
+        this.m_LaterDirection = Vector3.left;
 
-        this.dashMove = new EaseMove(this.m_Body);
-        this.jumpMove = new EaseMove(this.m_Body);
+        this.m_DashMove = new CMEaseMove();
+        this.m_JumpMove = new CMEaseMove();
     }
 
     public void SetMovementInput(Vector2 moveInput)
@@ -59,9 +60,8 @@ public class CMController : MonoBehaviour
         }
         input = inputFrame * input;
         m_MoveInput = input.normalized;
-        //m_Body.SetTargetPostion(movedelta);
-        this.m_Velocity = m_MoveInput * this.speed;
-        this.laterDirection = m_Velocity;
+        this.m_InputVelocity = m_MoveInput * this.speed;
+        this.m_LaterDirection = m_InputVelocity;
     }
 
     public void SetRotationInput(Vector2 rotationInput)
@@ -86,7 +86,7 @@ public class CMController : MonoBehaviour
     {
         if (jump)
         {
-            this.jumpMove.Enter(0.7f, 0.02f, Vector3.up);
+            this.m_JumpMove.Enter(0.7f, 0.05f, Vector3.up);
         }
     }
 
@@ -95,7 +95,7 @@ public class CMController : MonoBehaviour
     {
         if (dash)
         {
-            this.dashMove.Enter(0.8f, 0.05f, this.laterDirection);
+            this.m_DashMove.Enter(0.8f, 0.02f, this.m_LaterDirection);
         }
     }
 
@@ -109,11 +109,16 @@ public class CMController : MonoBehaviour
 
     protected void FixedUpdate()
     {
-        this.dashMove.Update();
-        this.jumpMove.Update();
-
-        this.m_Body.Move(this.m_Velocity);
-        this.m_Velocity = Vector3.zero;
+        this.m_DashMove.FixedUpdate();
+        this.m_JumpMove.FixedUpdate();
+        
+        // this.m_InputVelocity += this.m_DashMove.EaseVelocity * this.speed; 
+        // this.m_InputVelocity += this.m_JumpMove.EaseVelocity * this.speed;;
+        this.Body.Move(this.m_DashMove.EaseVelocity );
+        this.Body.Move(this.m_JumpMove.EaseVelocity );
+        
+        this.m_Body.InputMove(this.m_InputVelocity);
+        this.m_InputVelocity = Vector3.zero;
 
         if (this.transform.position.y < -100)
         {
