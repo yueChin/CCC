@@ -33,10 +33,8 @@ public class CMSwitch : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Target = null;
 
         SwitchCamToTree(true);
-
     }
 
     public void DoShake( float value)
@@ -64,37 +62,22 @@ public class CMSwitch : MonoBehaviour
         }
     }
 
-    private bool m_IsMoveHold = false;
-    bool m_IsMoving = false;
     public float moveCheckDuration = 1.5f;
     float m_MoveCheckTime;
 
     void CheckMovingState()
     {
-        if (m_IsMoving)
+        if(!isFreeCamera)
             return;
-        if (playerInput.WASDHold && !m_IsMoveHold)
-        {
-            m_IsMoveHold = true;
-            m_MoveCheckTime = 0f;
-        }
-
-        bool isApp = Mathf.Approximately(playerInput.WASDInput.x, 0) && Mathf.Approximately(playerInput.WASDInput.y, 0);
-        if (m_IsMoveHold && !isApp)
+        
+        if (playerInput.WASDHold )
         {
             m_MoveCheckTime += Time.deltaTime;
-        }
-
-        if (m_IsMoveHold && !playerInput.WASDHold)
-        {
-            m_IsMoveHold = false;
-            m_MoveCheckTime = 0f;
         }
 
         if (m_MoveCheckTime > this.moveCheckDuration)
         {
             SwitchCamToTree(true);
-            m_IsMoving = true;
             //Debug.LogError("m_moveCheckTimem_moveCheckTimem_moveCheckTime");
         }
     }
@@ -103,8 +86,13 @@ public class CMSwitch : MonoBehaviour
     void Update()
     {         
         CheckMovingState();
+
+        if (playerInput.QInput && isFreeCamera)
+        {
+            SwitchCamToTree(false);
+        }
         
-        if (isFreeCamera == false)
+        if (!isFreeCamera)
         {   
             if (CMFreeLook != null)
             {
@@ -120,9 +108,8 @@ public class CMSwitch : MonoBehaviour
                 if (dis > farDis || dis < nearDis)
                 {
                     isFreeCamera = true;
-                    Target = null;
-
-                    SwitchCamToTree(true);
+                    m_MoveCheckTime = 0f;
+                    //SwitchCamToTree(true);
                 }
 
                 if (dis < nearDis)
@@ -137,12 +124,12 @@ public class CMSwitch : MonoBehaviour
         }
     }
 
-    private bool m_Test = false;
+    private bool m_Flag = false;
     [ContextMenu( "SwitchCamToTree" )]
-    void Test()
+    void Switch()
     {   
-        SwitchCamToTree(m_Test);
-        m_Test = !m_Test;
+        SwitchCamToTree(m_Flag);
+        m_Flag = !m_Flag;
     }
 
     //public float switchInterval = 1f;
@@ -156,12 +143,12 @@ public class CMSwitch : MonoBehaviour
                 CMFreeLook.Priority = 10;
             if(CMTarget != null)
                 CMTarget.Priority = 8;
-        }   
+        }
         else
         {
-            if(CMFreeLook != null)
+            if (CMFreeLook != null)
                 CMFreeLook.Priority = 8;
-            if(CMTarget != null)
+            if (CMTarget != null)
                 CMTarget.Priority = 10;
         }
     }
