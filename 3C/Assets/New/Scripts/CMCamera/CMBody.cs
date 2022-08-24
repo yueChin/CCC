@@ -42,6 +42,17 @@ public class CMBody : Body
         }
         Move(m_WorldRule.GetGravity(this));
     }
+
+    public void InputRotate(Vector3 forward,bool isPlayer)
+    {
+        if (m_MoveInput.sqrMagnitude > 0.01f)
+        {
+            float fdt = Time.fixedDeltaTime;
+            Quaternion qA = transform.rotation;
+            Quaternion qB = Quaternion.LookRotation((isPlayer && Vector3.Dot(forward, m_MoveInput) < 0) ? -m_MoveInput : m_MoveInput);
+            transform.rotation = Quaternion.Slerp(qA, qB, Damper.Damp(1, VelocityDamping, fdt));
+        }
+    }
     
     public void InputMove(Vector3 velocityInput)
     {
@@ -67,6 +78,35 @@ public class CMBody : Body
 
     public override void SetTargetRotation()
     {
-        
+        Vector3 movementInput = m_MoveInput;
+        if (movementInput.sqrMagnitude > 1.0f)
+        {
+            movementInput.Normalize();
+        }
+
+        m_TargetHorizontalSpeedp = movementInput.magnitude * movementSettings.MaxHorizontalSpeed;
+        float acceleration = m_HasMoveInput ? movementSettings.Acceleration : movementSettings.Decceleration;
+
+        m_HorizontalSpeed = Mathf.MoveTowards(m_HorizontalSpeed, m_TargetHorizontalSpeedp, acceleration * Time.deltaTime);
+
+        Vector3 moveDir = m_HasMoveInput ? m_MoveInput : m_LastMoveInput;
+        if (moveDir.sqrMagnitude > 1f)
+        {
+            moveDir.Normalize();
+        }
+        //Debug.LogError(moveDir);
+        // if (moveDir.Equals(Vector3.zero) || moveDir.sqrMagnitude < 0.01)
+        // {
+        //     return;
+        // }
+
+        Vector3 horizontalMovement = moveDir.SetY(0.0f); //+ this.velocity.y * Vector3.up;
+        if (horizontalMovement.sqrMagnitude < 0.01f)
+            return;
+
+        float rotationSpeed = Mathf.Lerp(rotationSettings.MaxRotationSpeed, rotationSettings.MinRotationSpeed, m_HorizontalSpeed / m_TargetHorizontalSpeedp);
+
+        Quaternion targetRotation = Quaternion.LookRotation(horizontalMovement, Vector3.up);
+        m_Transform.rotation = Quaternion.RotateTowards(m_Transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 }

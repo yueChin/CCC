@@ -66,19 +66,33 @@ public class CMController : MonoBehaviour
 
     public void SetRotationInput(Vector2 rotationInput)
     {
-        // Adjust the pitch angle (X Rotation)
-        float pitchAngle = ControlRotation.x;
-        pitchAngle -= rotationInput.y * controlRotationSensitivity;
-        pitchAngle %= 360.0f;
-        pitchAngle = Mathf.Clamp(pitchAngle, -45, 75);
+        // // Adjust the pitch angle (X Rotation)
+        // float pitchAngle = ControlRotation.x;
+        // pitchAngle -= rotationInput.y * controlRotationSensitivity;
+        // pitchAngle %= 360.0f;
+        // pitchAngle = Mathf.Clamp(pitchAngle, -45, 75);
+        //
+        // // Adjust the yaw angle (Y Rotation)
+        // float yawAngle = ControlRotation.y;
+        // yawAngle += rotationInput.x * controlRotationSensitivity;
+        // yawAngle %= 360.0f;
+        //
+        // ControlRotation = new Vector2(pitchAngle, yawAngle);
+        //m_Body.SetTargetRotation();
+        
+        Vector3 fwd;
+        switch (InputForward)
+        {
+            case ForwardMode.Camera: fwd = Camera.main.transform.forward; break;
+            case ForwardMode.Player: fwd = transform.forward; break;
+            case ForwardMode.World: default: fwd = Vector3.forward; break;
+        }
 
-        // Adjust the yaw angle (Y Rotation)
-        float yawAngle = ControlRotation.y;
-        yawAngle += rotationInput.x * controlRotationSensitivity;
-        yawAngle %= 360.0f;
-
-        ControlRotation = new Vector2(pitchAngle, yawAngle);
-        m_Body.SetTargetRotation();
+        fwd.y = 0;
+        fwd = fwd.normalized;
+        if (fwd.sqrMagnitude < 0.01f)
+            return;
+        m_Body.InputRotate(fwd,InputForward == ForwardMode.Player);
     }
 
 
