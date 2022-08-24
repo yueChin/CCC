@@ -64,4 +64,9 @@ public class CMBody : Body
     {
         this.m_PhysicVelocity += velocityDelta;
     }
+
+    public override void SetTargetRotation()
+    {
+        
+    }
 }

@@ -290,6 +290,7 @@ public partial class Body : MonoBehaviour
 
     public virtual void SetTargetRotation()
     {
+        
         Vector3 movementInput = m_MoveInput;
         if (movementInput.sqrMagnitude > 1.0f)
         {

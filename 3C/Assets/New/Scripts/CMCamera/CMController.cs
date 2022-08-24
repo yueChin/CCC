@@ -101,8 +101,8 @@ public class CMController : MonoBehaviour
 
     protected void Update()
     {
-        SetRotationInput(playerInput.CameraInput);
-        SetMovementInput(playerInput.MoveInput);
+        SetRotationInput(playerInput.MouseMoveInput);
+        SetMovementInput(playerInput.WASDInput);
         SetJumpInput(playerInput.JumpInput);
         SetDashInput(playerInput.DashInput);
     }

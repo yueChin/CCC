@@ -60,7 +60,7 @@ public class PlayerMove : MonoBehaviour
 
         Quaternion inputFrame = Quaternion.LookRotation(fwd, Vector3.up);
         //Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        Vector3 input = new Vector3(playerInput.MoveInput.x,0,playerInput.MoveInput.y);
+        Vector3 input = new Vector3(playerInput.WASDInput.x,0,playerInput.WASDInput.y);
         //Debug.LogError(input + "                 " + playerInput.MoveInput);
         //return;
         input = inputFrame * input;

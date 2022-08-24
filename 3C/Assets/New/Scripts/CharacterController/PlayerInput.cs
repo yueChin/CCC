@@ -1,26 +1,26 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 
 public class PlayerInput : MonoBehaviour
 {
-
-    public Vector2 MoveInput { get; private set; }
-    public Vector2 CameraInput { get; private set; }
+    public Vector2 WASDInput { get; private set; }
+    public bool WASDHold { get; private set; }
+    public Vector2 MouseMoveInput { get; private set; }
     public bool JumpInput { get; private set; }
-    
     public bool DashInput { get; private set; }
-
+    public bool LeftMouseInput { get; private set; }
+    public bool RightMouseInput { get; private set; }
+    
     public void OnMoveEvent(InputAction.CallbackContext context)
     {
         Vector2 moveInput = context.ReadValue<Vector2>();
-        MoveInput = moveInput;
+        WASDInput = moveInput;
     }
 
     public void OnLookEvent(InputAction.CallbackContext context)
     {
-        CameraInput = context.ReadValue<Vector2>();
+        MouseMoveInput = context.ReadValue<Vector2>();
     }
 
     public void OnJumpEvent(InputAction.CallbackContext context)
@@ -44,6 +44,42 @@ public class PlayerInput : MonoBehaviour
         else if (context.canceled)
         {
             DashInput = false;
+        }
+    }
+
+    public void OnWASDHoldEvent(InputAction.CallbackContext context)
+    {
+        if (context.started || context.performed)
+        {
+            WASDHold = true;
+        }
+        else if (context.canceled)
+        {
+            WASDHold = false;
+        }
+    }
+    
+    public void OnLeftMouseInput(InputAction.CallbackContext context)
+    {
+        if (context.started || context.performed)
+        {
+            LeftMouseInput = true;
+        }
+        else if (context.canceled)
+        {
+            LeftMouseInput = false;
+        }
+    }
+    
+    public void OnRightMouseInput(InputAction.CallbackContext context)
+    {
+        if (context.started || context.performed)
+        {
+            RightMouseInput = true;
+        }
+        else if (context.canceled)
+        {
+            RightMouseInput = false;
         }
     }
 }
