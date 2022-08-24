@@ -12,7 +12,7 @@ public class TouchInput : MonoBehaviour
     public float value;
     public float valueMul = 30;
     public Transform followTgt;
-    public CmSwitch cmSwitch;
+    public CMSwitch cmSwitch;
     // Start is called before the first frame update
     public PlayerInput playerInput;
     

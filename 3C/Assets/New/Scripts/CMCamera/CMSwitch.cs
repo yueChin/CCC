@@ -7,7 +7,7 @@ using UnityEditor.MemoryProfiler;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class CmSwitch : MonoBehaviour
+public class CMSwitch : MonoBehaviour
 {   
     public CinemachineFreeLook CMFreeLook;
     public CinemachineVirtualCamera CMTarget;

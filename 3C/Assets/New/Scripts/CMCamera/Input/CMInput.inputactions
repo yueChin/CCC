@@ -58,6 +58,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Q",
+                    "type": "Button",
+                    "id": "000ca360-be1d-46f8-bd65-1144427941af",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -295,7 +304,7 @@
                 {
                     "name": "",
                     "id": "dc05f6aa-536b-4dc8-8d53-17fa7eb3d20a",
-                    "path": "<Gamepad>/leftStick/up",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -306,7 +315,7 @@
                 {
                     "name": "",
                     "id": "8a30225a-ccb2-493f-b21e-88c3281457d0",
-                    "path": "<Gamepad>/leftStick/left",
+                    "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -317,7 +326,7 @@
                 {
                     "name": "",
                     "id": "93ba5d27-efce-4088-a0dc-2001e831e850",
-                    "path": "<Gamepad>/leftStick/right",
+                    "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -328,7 +337,7 @@
                 {
                     "name": "",
                     "id": "4ab62aa5-17c8-42ed-b6e6-f42893ae4e76",
-                    "path": "<Gamepad>/leftStick/up",
+                    "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -338,45 +347,12 @@
                 },
                 {
                     "name": "",
-                    "id": "98ef6ecb-2686-44f2-b1be-3c067f2991c3",
-                    "path": "<Gamepad>/dpad/up",
+                    "id": "92665f9c-ef95-4a7b-abd4-4ed7e46f0ff4",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "MoveUp/Down",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0d7f402c-eafc-49ce-b08e-005be87c7033",
-                    "path": "<Gamepad>/dpad/left",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "MoveUp/Down",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "622045f5-853b-4c97-bcf0-5e907dadccf7",
-                    "path": "<Gamepad>/dpad/right",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "MoveUp/Down",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d4632a60-c3a1-446b-903a-c038cd8eb0c3",
-                    "path": "<Gamepad>/dpad/down",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "MoveUp/Down",
+                    "action": "Q",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

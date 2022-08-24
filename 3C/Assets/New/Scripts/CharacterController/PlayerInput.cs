@@ -12,6 +12,7 @@ public class PlayerInput : MonoBehaviour
     public bool LeftMouseInput { get; private set; }
     public bool RightMouseInput { get; private set; }
     
+    public bool QInput { get; private set; }
     public void OnMoveEvent(InputAction.CallbackContext context)
     {
         Vector2 moveInput = context.ReadValue<Vector2>();
@@ -80,6 +81,18 @@ public class PlayerInput : MonoBehaviour
         else if (context.canceled)
         {
             RightMouseInput = false;
+        }
+    }
+    
+    public void OnQInput(InputAction.CallbackContext context)
+    {
+        if (context.started || context.performed)
+        {
+            QInput = true;
+        }
+        else if (context.canceled)
+        {
+            QInput = false;
         }
     }
 }
