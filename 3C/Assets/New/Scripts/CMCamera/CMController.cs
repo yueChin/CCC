@@ -17,6 +17,7 @@ public class CMController : MonoBehaviour
 
     private Vector3 m_InputVelocity;
     private Vector3 m_MoveInput;
+    private FSM m_InputFSM;
     public Vector2 ControlRotation { get; private set; }
     public CMBody Body => m_Body;
 
@@ -26,7 +27,7 @@ public class CMController : MonoBehaviour
         {
             playerInput = FindObjectOfType<PlayerInput>();
         }
-
+        
         this.m_Body = this.GetComponent<CMBody>();
 
         this.m_LaterDirection = Vector3.left;
@@ -103,7 +104,6 @@ public class CMController : MonoBehaviour
 
     protected void Update()
     {
-        //SetRotationInput(playerInput.MouseMoveInput);
         SetMovementInput(playerInput.WASDInput);
         SetJumpInput(playerInput.JumpInput);
         SetDashInput(playerInput.DashInput);
