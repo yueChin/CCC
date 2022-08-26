@@ -10,16 +10,15 @@ public class CMController : MonoBehaviour
     public enum ForwardMode { Camera, Player, World };
     public ForwardMode InputForward;
     
-    private CMBody m_Body;
+    private CMBodyComponent m_Body;
     private Vector3 m_LaterDirection;
     private CMEaseMove m_DashMove;
     private CMEaseMove m_JumpMove;
 
     private Vector3 m_InputVelocity;
     private Vector3 m_MoveInput;
-    private FSM m_InputFSM;
     public Vector2 ControlRotation { get; private set; }
-    public CMBody Body => m_Body;
+    public CMBodyComponent Body => m_Body;
 
     protected void Awake()
     {
@@ -28,7 +27,7 @@ public class CMController : MonoBehaviour
             playerInput = FindObjectOfType<PlayerInput>();
         }
         
-        this.m_Body = this.GetComponent<CMBody>();
+        this.m_Body = this.GetComponent<CMBodyComponent>();
 
         this.m_LaterDirection = Vector3.left;
 
@@ -44,7 +43,6 @@ public class CMController : MonoBehaviour
         state.SetController(this);
         fsm.AddState(state);
         fsm.Init();
-        m_InputFSM = fsm;
     }
 
     public void SetMovementInput(Vector2 moveInput)

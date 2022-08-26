@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class WorldRule : MonoBehaviour
 {
-    public Dictionary<Body, CMEaseMove> GravityDict = new Dictionary<Body, CMEaseMove>();
-    public List<CMEaseMove> GravityList = new List<CMEaseMove>();
+    public Dictionary<IWorldBody, CMEaseMove> GravityDict = new Dictionary<IWorldBody, CMEaseMove>();
+    public List<KeyValuePair<IWorldBody,CMEaseMove>> GravityList = new List<KeyValuePair<IWorldBody,CMEaseMove>>();
     protected CustomEaseMove m_GravityMove;
     
     public float Gravity
@@ -14,7 +14,7 @@ public class WorldRule : MonoBehaviour
         get { return this.m_GravityMove.Power; }
     }
     
-    public void SetActiveBody(Body body)
+    public void SetActiveBody(IWorldBody body)
     {
         if (!GravityDict.ContainsKey(body))
         {
@@ -22,19 +22,19 @@ public class WorldRule : MonoBehaviour
         }
     }
 
-    public void ActiveBody(Body body)
+    public void ActiveBody(IWorldBody body)
     {
         if (GravityDict.TryGetValue(body, out CMEaseMove value))
         {
             if (!value.IsRunning)
             {
                 value.Enter(0, -0.035f, Vector3.down);
-                GravityList.Add(value);
+                GravityList.Add(new KeyValuePair<IWorldBody, CMEaseMove>(body,value));
             }
         }
     }
 
-    public void NegtiveBody(Body body)
+    public void NegtiveBody(IWorldBody body)
     {
         if (GravityDict.TryGetValue(body, out CMEaseMove value))
         {
@@ -43,11 +43,11 @@ public class WorldRule : MonoBehaviour
                 value.Exit();
                 value.Power = 0;
             }
-            GravityList.Remove(value);
+            GravityList.Remove(new KeyValuePair<IWorldBody, CMEaseMove>(body,value));
         }
     }
 
-    public Vector3 GetGravity(Body body)
+    public Vector3 GetGravity(IWorldBody body)
     {
         if (GravityDict.TryGetValue(body, out CMEaseMove value))
         {
@@ -62,8 +62,9 @@ public class WorldRule : MonoBehaviour
         {
             for (int i = GravityList.Count - 1; i >= 0; i--)
             {
-                GravityList[i].FixedUpdate();
-                if (!GravityList[i].IsRunning)
+                GravityList[i].Value.FixedUpdate();
+                GravityList[i].Key.AffectByWorldRule(GravityList[i].Value.EaseVelocity);
+                if (!GravityList[i].Value.IsRunning)
                 {
                     GravityList.RemoveAt(i);
                 }
