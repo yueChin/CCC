@@ -36,6 +36,17 @@ public class CMController : MonoBehaviour
         this.m_JumpMove = new CMEaseMove();
     }
 
+    private void Start()
+    {
+        FSMManager fsmManager = GameLoop.Instace.GetGameMoudle<FSMManager>();
+        FSM fsm = fsmManager.FetchFSM<FSM>();
+        NormalInptuState<CMController> state = new NormalInptuState<CMController>(0, "NormalInput");
+        state.SetController(this);
+        fsm.AddState(state);
+        fsm.Init();
+        m_InputFSM = fsm;
+    }
+
     public void SetMovementInput(Vector2 moveInput)
     {
         Vector3 fwd;
@@ -102,12 +113,12 @@ public class CMController : MonoBehaviour
         }
     }
 
-    protected void Update()
-    {
-        SetMovementInput(playerInput.WASDInput);
-        SetJumpInput(playerInput.JumpInput);
-        SetDashInput(playerInput.DashInput);
-    }
+    // protected void Update()
+    // {
+    //     SetMovementInput(playerInput.WASDInput);
+    //     SetJumpInput(playerInput.JumpInput);
+    //     SetDashInput(playerInput.DashInput);
+    // }
 
     protected void FixedUpdate()
     {

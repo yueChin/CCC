@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class NormalInptuState<T> : FSMState where T : Controller
+public class NormalInptuState<T> : FSMState where T : CMController
 {
     private CMController m_Controller;
     
