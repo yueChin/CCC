@@ -11,7 +11,12 @@ public class GameLoop : MonoBehaviour
     public void Awake()
     {
         Instace = this;
-        MoudleList = new List<IGameMoudle> { new FSMManager() };
+        MoudleList = new List<IGameMoudle>
+        {
+            new FSMManager(),
+            new BTContent(),
+            new EventCenter(),
+        };
         //FixedMoudleList = new List<IGameMoudle>();
     }
 
@@ -28,6 +33,22 @@ public class GameLoop : MonoBehaviour
         foreach (IGameMoudle gameMoudle in MoudleList)
         {
             gameMoudle.Tick();
+        }
+    }
+
+    public void FixedUpdate()
+    {
+        foreach (IGameMoudle gameMoudle in FixedMoudleList)
+        {
+            gameMoudle.Tick();
+        }
+    }
+
+    public void OnDestroy()
+    {
+        foreach (IGameMoudle gameMoudle in MoudleList)
+        {
+            gameMoudle.Destroy();
         }
     }
 
