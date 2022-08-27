@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class BTContent : IGameMoudle,ILifeCycle
 {
@@ -40,6 +41,12 @@ public class BTContent : IGameMoudle,ILifeCycle
             m_Blackboards.Add(key, new BlackBoard(TimeMenter));
         }
         return m_Blackboards[key];
+    }
+
+    public static BTTimeMenter GetTimeMenter()
+    {
+        BTContent btc = GameLoop.Instace.GetGameMoudle<BTContent>();
+        return btc.TimeMenter;
     }
     
     public static BlackBoard GetSharedBlackboard(string key)
