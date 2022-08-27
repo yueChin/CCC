@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.Assertions;
 
-public class RootNode : BTDecorator , ILifeCycle
+public class BTRootNode : BTDecorator , ILifeCycle
 {
     public BlackBoard BlckBoard { get; private set; }
     public List<BTNode> NodeList = new List<BTNode>();
     public BTTimeMenter TimeMenter { get; private set; }
 
-    public RootNode(BlackBoard bb,BTNode node ) : base("Root",node)
+    public BTRootNode(BlackBoard bb,BTNode node ) : base("Root",node)
     {
         BlckBoard = BTContent.GetSharedBlackboard("Root");
         TimeMenter = BTContent.GetTimeMenter();

@@ -10,7 +10,7 @@ public abstract class BTNode : ILifeCycle
     }
     
     public string Name { get; protected set; }
-    public RootNode RootNode { get; protected set; }
+    public BTRootNode RootNode { get; protected set; }
     public BTContainer Parent { get; protected set; }
     
     protected State m_CurrentState = State.INACTIVE;
@@ -27,7 +27,7 @@ public abstract class BTNode : ILifeCycle
         Name = name;
     }
 
-    public virtual void SetRoot(RootNode rootNode)
+    public virtual void SetRoot(BTRootNode rootNode)
     {
         this.RootNode = rootNode;
     }

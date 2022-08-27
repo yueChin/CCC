@@ -15,7 +15,7 @@ public abstract class BTComposite : BTContainer
         }
     }
 
-    public override void SetRoot(RootNode rootNode)
+    public override void SetRoot(BTRootNode rootNode)
     {
         base.SetRoot(rootNode);
 

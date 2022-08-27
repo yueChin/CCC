@@ -5,14 +5,8 @@ public abstract class BTContainer : BTNode
     private bool collapse = false;
     public bool Collapse
     {
-        get
-        {
-            return collapse;
-        }
-        set
-        {
-            collapse = value;
-        }
+        get => collapse;
+        set => collapse = value;
     }
 
     public BTContainer(string name) : base(name)
