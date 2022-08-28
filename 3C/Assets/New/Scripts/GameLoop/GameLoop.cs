@@ -16,13 +16,22 @@ public class GameLoop : MonoBehaviour
             new FSMManager(),
             new BTContent(),
             new EventCenter(),
+            new BuffSystem()
         };
-        //FixedMoudleList = new List<IGameMoudle>();
+        FixedMoudleList = new List<IGameMoudle>()
+        {
+            new FSMManager(),
+        };
     }
 
     public void Start()
     {
         foreach (IGameMoudle gameMoudle in MoudleList)
+        {
+            gameMoudle.Awake();
+        }
+        
+        foreach (IGameMoudle gameMoudle in FixedMoudleList)
         {
             gameMoudle.Awake();
         }
@@ -50,6 +59,11 @@ public class GameLoop : MonoBehaviour
         {
             gameMoudle.Destroy();
         }
+        
+        foreach (IGameMoudle gameMoudle in FixedMoudleList)
+        {
+            gameMoudle.Destroy();
+        }
     }
 
     public T GetGameMoudle<T>() where T : class, IGameMoudle
@@ -57,6 +71,21 @@ public class GameLoop : MonoBehaviour
         Type type = typeof(T);
         T result = null;
         foreach (IGameMoudle moudle in MoudleList)
+        {
+            if (moudle.GetType() == type)
+            {
+                result = moudle as T;
+                break;
+            }
+        }
+        return result;
+    }
+    
+    public T GetFixedGameMoudle<T>() where T : class, IGameMoudle
+    {
+        Type type = typeof(T);
+        T result = null;
+        foreach (IGameMoudle moudle in FixedMoudleList)
         {
             if (moudle.GetType() == type)
             {

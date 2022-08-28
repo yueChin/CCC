@@ -2,7 +2,7 @@ using System;
 using Cinemachine.Utility;
 using UnityEngine;
 
-public class CMBodyComponent : MonoBehaviour,IWorldBody
+public class CMBody : MonoBehaviour,IWorldBody
 {
     public const float MIN_RANGE = 0.01f;
 
@@ -67,6 +67,8 @@ public class CMBodyComponent : MonoBehaviour,IWorldBody
 
     public Vector3 LegalPosition { get; protected set; }
 
+    public BoxCollider BoxCollider => m_Collider;
+    
     protected virtual void Awake()
     {
         this.m_Collider = this.GetComponent<BoxCollider>();
@@ -85,6 +87,14 @@ public class CMBodyComponent : MonoBehaviour,IWorldBody
 
     protected virtual void Start()
     {
+        FSMManager fsmManager = GameLoop.Instace.GetFixedGameMoudle<FSMManager>();
+        GenericFSM<CMBody> fsm = fsmManager.FetchFSM<GenericFSM<CMBody>>();
+        GroundState state = new GroundState(0, "Ground");
+        SkyState skyState = new SkyState(1, "Sky");
+        fsm.AddState(state);
+        fsm.AddState(skyState);
+        fsm.Init();
+        
         this.LegalPosition = this.m_Transform.position;
         this.AdjustPosition();
         this.OriginPosition = this.m_Transform.position;

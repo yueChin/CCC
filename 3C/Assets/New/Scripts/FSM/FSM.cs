@@ -2,12 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FSM : ILifeCycle
+public class FSM: ILifeCycle
 {
     public Dictionary<int, FSMState> FsmStateDict;
     public Stack<FSMState> FsmStateStack;
 
     public FSMState CurtState { get; private set; }
+    public string Name { get; private set; }
+
+    public FSM()
+    {
+        Name = String.Empty;
+    }
+    
+    public FSM(string name = null)
+    {
+        Name = name;
+    }
     
     public void Awake()
     {
@@ -44,6 +55,7 @@ public class FSM : ILifeCycle
             FsmStateDict[type] = state;
         }
         state.SetFSMController(this);
+        state.Awake();
     }
 
     public void Init()
@@ -62,13 +74,15 @@ public class FSM : ILifeCycle
         CurtState = FsmStateDict[stateId];
     }
     
-    public void SwitchTo(FSMState state)
+    
+    public void SwitchTo(int id)
     {
-        if (CheckSwitchCondition(state))
-        {
-            FsmStateStack.Push(state);
-            CurtState = state;
-        }
+        if (!FsmStateDict.TryGetValue(id, out FSMState state)) 
+            return;
+        if (!CheckSwitchCondition(state)) 
+            return;
+        FsmStateStack.Push(state);
+        CurtState = state;
     }
 
     private bool CheckSwitchCondition(FSMState state)
