@@ -9,7 +9,7 @@ public class EventCenter :IGameMoudle
     {
     }
 
-    public void Tick()
+    public void Tick(float timeDelta)
     {
     }
 }

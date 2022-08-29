@@ -4,29 +4,26 @@ using UnityEngine.Assertions;
 public class BTRootNode : BTDecorator , ILifeCycle
 {
     public BlackBoard BlckBoard { get; private set; }
-    public List<BTNode> NodeList = new List<BTNode>();
+    public BTNode BTEntryNode;
     public BTTimeMenter TimeMenter { get; private set; }
 
     public BTRootNode(BlackBoard bb,BTNode node ) : base("Root",node)
     {
-        BlckBoard = BTContent.GetSharedBlackboard("Root");
-        TimeMenter = BTContent.GetTimeMenter();
+        BTEntryNode = node;
+        BlckBoard = bb;
+        TimeMenter = GameLoop.Instace.GetGameMoudle<BTContent>().BtTimeMenter;
     } 
     
     public override void Awake()
     {
         base.Awake();
-        NodeList = new List<BTNode>();
     }
 
     public override void Destroy()
     {
         base.Destroy();
-        foreach (BTNode btNode in NodeList)
-        {
-            btNode.Destroy();
-        }
-        NodeList = null;
+        
+        BTEntryNode = null;
         TimeMenter = null;
     }
 

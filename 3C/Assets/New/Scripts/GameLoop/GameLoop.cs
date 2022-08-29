@@ -13,14 +13,16 @@ public class GameLoop : MonoBehaviour
         Instace = this;
         MoudleList = new List<IGameMoudle>
         {
+            new EventCenter(),
             new FSMManager(),
             new BTContent(),
-            new EventCenter(),
-            new BuffSystem()
+            new BuffSystemManager()
         };
         FixedMoudleList = new List<IGameMoudle>()
         {
             new FSMManager(),
+            new BTContent(),
+            new BuffSystemManager(),
         };
         
         foreach (IGameMoudle gameMoudle in MoudleList)
@@ -51,7 +53,7 @@ public class GameLoop : MonoBehaviour
     {
         foreach (IGameMoudle gameMoudle in MoudleList)
         {
-            gameMoudle.Tick();
+            gameMoudle.Tick(Time.deltaTime);
         }
     }
 
@@ -59,7 +61,7 @@ public class GameLoop : MonoBehaviour
     {
         foreach (IGameMoudle gameMoudle in FixedMoudleList)
         {
-            gameMoudle.Tick();
+            gameMoudle.Tick(Time.fixedDeltaTime);
         }
     }
 

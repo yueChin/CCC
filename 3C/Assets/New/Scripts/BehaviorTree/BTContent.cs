@@ -5,16 +5,16 @@ public class BTContent : IGameMoudle,ILifeCycle
 {
     private Dictionary<string, BlackBoard> m_Blackboards ;
 
-    private BTTimeMenter m_TimeMenter ;
-
-    public BTTimeMenter TimeMenter => m_TimeMenter;
+    private  BTTimeMenter m_BtTimeMenter;
+    public BTTimeMenter BtTimeMenter => m_BtTimeMenter;
+    public BTContent()
+    {
+        m_BtTimeMenter = new BTTimeMenter();
+    }
     
     public void Awake()
     {
         m_Blackboards = new Dictionary<string, BlackBoard>();
-        m_TimeMenter = new BTTimeMenter();
-        
-        m_TimeMenter.Awake();
     }
 
     public void Destroy()
@@ -23,32 +23,26 @@ public class BTContent : IGameMoudle,ILifeCycle
         {
             keyValuePair.Value.Destroy();
         }
-        m_TimeMenter.Destroy();
-
         m_Blackboards = null;
-        m_TimeMenter = null;
+        
+        m_BtTimeMenter.Destroy();
+        m_BtTimeMenter = null;
     }
 
-    public void Tick()
+    public void Tick(float timedelta)
     {
-        m_TimeMenter.Tick();
+        m_BtTimeMenter.Tick(timedelta);
     }
     
     public BlackBoard GetBlackboard(string key)
     {
         if (!m_Blackboards.ContainsKey(key))
         {
-            m_Blackboards.Add(key, new BlackBoard(TimeMenter));
+            m_Blackboards.Add(key, new BlackBoard(m_BtTimeMenter));
         }
         return m_Blackboards[key];
     }
 
-    public static BTTimeMenter GetTimeMenter()
-    {
-        BTContent btc = GameLoop.Instace.GetGameMoudle<BTContent>();
-        return btc.TimeMenter;
-    }
-    
     public static BlackBoard GetSharedBlackboard(string key)
     {
         BTContent btc = GameLoop.Instace.GetGameMoudle<BTContent>();

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class FSMManager : IGameMoudle
 {
     public List<FSM> LiveingFSMList;
     public Dictionary<Type,FSM> FSMDict;
 
-    public void Tick()
+    public void Tick(float deltaTime)
     {
         foreach (FSM fsm in LiveingFSMList)
         {
@@ -32,7 +33,7 @@ public class FSMManager : IGameMoudle
         FSMDict = null;
     }
 
-    public T FetchFSM<T>(T t = default) where T : FSM,new()
+    public T FetchFSM<T>() where T : FSM,new()
     {
         Type type = typeof(T);
         foreach (FSM fsm in LiveingFSMList)
@@ -52,10 +53,6 @@ public class FSMManager : IGameMoudle
         else
         {
             T fsmT = new T();
-            if (t != default && fsmT is FSM<T> gFsm)
-            {
-                gFsm.SetT(t);
-            }
             FSMDict.Add(type,fsmT);
             LiveingFSMList.Add(fsmT);
             fsmT.Awake();

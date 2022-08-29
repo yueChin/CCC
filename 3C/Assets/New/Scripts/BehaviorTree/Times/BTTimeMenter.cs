@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 
-public class BTTimeMenter :IGameMoudle,ILifeCycle
+public class BTTimeMenter :ILifeCycle
 {
     private List<System.Action> m_UpdateObserverList;
     private Dictionary<System.Action, BTTimer> m_TimerDict ;
@@ -323,8 +323,8 @@ public class BTTimeMenter :IGameMoudle,ILifeCycle
         m_CurrentTimerPoolIndex = 0;
     }
 
-    public void Tick()
+    public void Tick(float timeDelta)
     {
-        this.Update(Time.deltaTime);
+        this.Update(timeDelta);
     }
 }

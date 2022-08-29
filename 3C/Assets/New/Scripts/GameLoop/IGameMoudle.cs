@@ -1,4 +1,4 @@
 ﻿public interface IGameMoudle : ILifeCycle
 {
-    public void Tick();
+    public void Tick(float delta);
 }
