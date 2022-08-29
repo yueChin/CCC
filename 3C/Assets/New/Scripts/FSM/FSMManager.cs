@@ -17,7 +17,7 @@ public class FSMManager : IGameMoudle
     public void Awake()
     {
         LiveingFSMList = new List<FSM>();
-        FSMDict = null;
+        FSMDict = new Dictionary<Type, FSM>();
     }
 
     public void Destroy()
@@ -52,7 +52,7 @@ public class FSMManager : IGameMoudle
         else
         {
             T fsmT = new T();
-            if (t != default && fsmT is GenericFSM<T> gFsm)
+            if (t != default && fsmT is FSM<T> gFsm)
             {
                 gFsm.SetT(t);
             }

@@ -38,7 +38,7 @@ public class CMController : MonoBehaviour
     private void Start()
     {
         FSMManager fsmManager = GameLoop.Instace.GetGameMoudle<FSMManager>();
-        GenericFSM<CMController> fsm = fsmManager.FetchFSM<GenericFSM<CMController>>();
+        FSM<CMController> fsm = fsmManager.FetchFSM<FSM<CMController>>();
         fsm.SetT(this);
         NormalInptuState state = new NormalInptuState(0, "NormalInput");
         fsm.AddState(state);

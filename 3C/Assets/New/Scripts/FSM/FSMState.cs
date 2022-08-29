@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Kits.DevlpKit.Helpers.ReflectionHelper;
 
 public class FSMState :ILifeCycle
 {
@@ -42,5 +43,30 @@ public class FSMState :ILifeCycle
     public virtual void Destroy()
     {
         FSM = null;
+    }
+}
+
+public class FSMState<T> : FSMState
+{
+    public T t { get; protected set; }
+    public FSMState(int id, string name = null) : base(id, name)
+    {
+        
+    }
+
+    public override void Awake()
+    {
+        base.Awake();
+        object obj = PropertyInfoHelper.GetPropertyValue(FSM, "FSMData");
+        if (obj != null)
+        {
+            t = (T)obj;
+        }
+    }
+
+    public override void Destroy()
+    {
+        base.Destroy();
+        t = default;
     }
 }

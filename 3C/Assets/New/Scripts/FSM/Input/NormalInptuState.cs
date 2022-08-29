@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class NormalInptuState : GenericFSMState<CMController>
+public class NormalInptuState : FSMState<CMController>
 {
     public NormalInptuState(int id, string name = "NormalController") : base(id, name)
     {

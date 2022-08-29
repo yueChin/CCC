@@ -22,10 +22,7 @@ public class GameLoop : MonoBehaviour
         {
             new FSMManager(),
         };
-    }
-
-    public void Start()
-    {
+        
         foreach (IGameMoudle gameMoudle in MoudleList)
         {
             gameMoudle.Awake();
@@ -36,6 +33,19 @@ public class GameLoop : MonoBehaviour
             gameMoudle.Awake();
         }
     }
+
+    // public void Start()
+    // {
+    //     foreach (IGameMoudle gameMoudle in MoudleList)
+    //     {
+    //         gameMoudle.Awake();
+    //     }
+    //     
+    //     foreach (IGameMoudle gameMoudle in FixedMoudleList)
+    //     {
+    //         gameMoudle.Awake();
+    //     }
+    // }
 
     public void Update()
     {

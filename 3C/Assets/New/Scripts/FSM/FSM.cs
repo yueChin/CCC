@@ -79,6 +79,8 @@ public class FSM: ILifeCycle
     {
         if (!FsmStateDict.TryGetValue(id, out FSMState state)) 
             return;
+        if (CurtState != null && CurtState.StateID == id)
+            return;
         if (!CheckSwitchCondition(state)) 
             return;
         FsmStateStack.Push(state);
@@ -91,7 +93,7 @@ public class FSM: ILifeCycle
         {
             if (CurtState.MaskIDs != null)
             {
-                for (var i = 0; i < CurtState.MaskIDs.Length; i++)
+                for (int i = 0; i < CurtState.MaskIDs.Length; i++)
                 {
                     if (CurtState.MaskIDs[i] == state.StateID)
                     {
@@ -122,4 +124,14 @@ public class FSM: ILifeCycle
         }
     }
     
+}
+
+public class FSM<T> : FSM
+{
+    public T FSMData { get; private set; }
+
+    public void SetT(T t)
+    {
+        FSMData = t;
+    }
 }
