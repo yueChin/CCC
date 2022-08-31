@@ -2,40 +2,40 @@
 
 public class BTTimeMax : BTDecorator
 {
-    private float limit = 0.0f;
-    private float randomVariation;
-    private bool waitForChildButFailOnLimitReached = false;
-    private bool isLimitReached = false;
+    private float m_Limit = 0.0f;
+    private float m_RandomVariation;
+    private bool m_WaitForChildButFailOnLimitReached = false;
+    private bool m_IsLimitReached = false;
 
     public BTTimeMax(float limit, bool waitForChildButFailOnLimitReached, BTNode decoratee) : base("TimeMax", decoratee)
     {
-        this.limit = limit;
-        this.randomVariation = limit * 0.05f;
-        this.waitForChildButFailOnLimitReached = waitForChildButFailOnLimitReached;
+        this.m_Limit = limit;
+        this.m_RandomVariation = limit * 0.05f;
+        this.m_WaitForChildButFailOnLimitReached = waitForChildButFailOnLimitReached;
         Assert.IsTrue(limit > 0f, "limit has to be set");
     }
 
     public BTTimeMax(float limit, float randomVariation, bool waitForChildButFailOnLimitReached, BTNode decoratee) : base("TimeMax", decoratee)
     {
-        this.limit = limit;
-        this.randomVariation = randomVariation;
-        this.waitForChildButFailOnLimitReached = waitForChildButFailOnLimitReached;
+        this.m_Limit = limit;
+        this.m_RandomVariation = randomVariation;
+        this.m_WaitForChildButFailOnLimitReached = waitForChildButFailOnLimitReached;
         Assert.IsTrue(limit > 0f, "limit has to be set");
     }
 
     protected override void DoStart()
     {
-        this.isLimitReached = false;
-        BTTimeMenter.AddTimer(limit, randomVariation, 0, TimeoutReached);
-        Decoratee.Start();
+        this.m_IsLimitReached = false;
+        BTTimeMenter.AddTimer(m_Limit, m_RandomVariation, 0, TimeoutReached);
+        ChildNode.Start();
     }
 
     protected override void DoStop()
     {
         BTTimeMenter.RemoveTimer(TimeoutReached);
-        if (Decoratee.IsActive)
+        if (ChildNode.IsActive)
         {
-            Decoratee.Stop();
+            ChildNode.Stop();
         }
         else
         {
@@ -46,7 +46,7 @@ public class BTTimeMax : BTDecorator
     protected override void DoChildStopped(BTNode child, bool result)
     {
         BTTimeMenter.RemoveTimer(TimeoutReached);
-        if (isLimitReached)
+        if (m_IsLimitReached)
         {
             Stopped(false);
         }
@@ -58,14 +58,14 @@ public class BTTimeMax : BTDecorator
 
     private void TimeoutReached()
     {
-        if (!waitForChildButFailOnLimitReached)
+        if (!m_WaitForChildButFailOnLimitReached)
         {
-            Decoratee.Stop();
+            ChildNode.Stop();
         }
         else
         {
-            isLimitReached = true;
-            Assert.IsTrue(Decoratee.IsActive);
+            m_IsLimitReached = true;
+            Assert.IsTrue(ChildNode.IsActive);
         }
     }
 }

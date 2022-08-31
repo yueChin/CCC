@@ -33,7 +33,7 @@ public class BTWaitForCondition : BTDecorator
         }
         else
         {
-            Decoratee.Start();
+            ChildNode.Start();
         }
     }
 
@@ -42,16 +42,16 @@ public class BTWaitForCondition : BTDecorator
         if (m_Condition.Invoke())
         {
             BTTimeMenter.RemoveTimer(CheckCondition);
-            Decoratee.Start();
+            ChildNode.Start();
         }
     }
 
     protected override void DoStop()
     {
         BTTimeMenter.RemoveTimer(CheckCondition);
-        if (Decoratee.IsActive)
+        if (ChildNode.IsActive)
         {
-            Decoratee.Stop();
+            ChildNode.Stop();
         }
         else
         {

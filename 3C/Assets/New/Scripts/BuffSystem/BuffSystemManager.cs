@@ -73,8 +73,15 @@ public class BuffSystemManager : IGameMoudle
             return 0;
         }
     }
+
+    public BuffSystem FetchSystem<T>() where T : BuffSystem,new()
+    {
+        T t = new T();
+        t.Awake();
+        return t;
+    }
     
-    public void AddBuff(BuffSystem buffSystem)
+    public void AddBuffSystem(BuffSystem buffSystem)
     {
         if (!m_AddBuffSystemSet.Contains(buffSystem) && !BuffSystemList.Contains(buffSystem))
         {
@@ -83,7 +90,7 @@ public class BuffSystemManager : IGameMoudle
         }
     }
 
-    public void RemoveBuff(BuffSystem buffSystem)
+    public void RemoveBuffSystem(BuffSystem buffSystem)
     {
         if (!m_RemoveBuffSystemSet.Contains(buffSystem) && BuffSystemList.Contains(buffSystem))
         {

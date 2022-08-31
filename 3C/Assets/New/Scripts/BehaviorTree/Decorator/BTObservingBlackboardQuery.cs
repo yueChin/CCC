@@ -1,19 +1,19 @@
 ﻿namespace NPBehave
 {
-    public class BTBlackboardQuery : BTObservingDecorator
+    public class BTObservingBlackboardQuery : BTObservingDecorator
     {
-        private string[] keys;
-        private System.Func<bool> query;
+        private string[] m_Keys;
+        private System.Func<bool> m_Query;
 
-        public BTBlackboardQuery(string[] keys, BTStops stopsOnChange, System.Func<bool> query, BTNode decoratee) : base("BlackboardQuery", stopsOnChange, decoratee)
+        public BTObservingBlackboardQuery(string[] keys, BTStops stopsOnChange, System.Func<bool> query, BTNode decoratee) : base("BlackboardQuery", stopsOnChange, decoratee)
         {
-            this.keys = keys;
-            this.query = query;
+            this.m_Keys = keys;
+            this.m_Query = query;
         }
 
         protected override void StartObserving()
         {
-            foreach (string key in this.keys)
+            foreach (string key in this.m_Keys)
             {
                 this.RootNode.BlackBoard.AddObserver(key, onValueChanged);
             }
@@ -21,7 +21,7 @@
 
         protected override void StopObserving()
         {
-            foreach (string key in this.keys)
+            foreach (string key in this.m_Keys)
             {
                 this.RootNode.BlackBoard.RemoveObserver(key, onValueChanged);
             }
@@ -34,13 +34,13 @@
 
         protected override bool IsConditionMet()
         {
-            return this.query();
+            return this.m_Query();
         }
 
         public override string ToString()
         {
             string keys = "";
-            foreach (string key in this.keys)
+            foreach (string key in this.m_Keys)
             {
                 keys += " " + key;
             }

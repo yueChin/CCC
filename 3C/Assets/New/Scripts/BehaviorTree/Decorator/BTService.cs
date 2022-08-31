@@ -2,14 +2,14 @@
 {
     private System.Action serviceMethod;
 
-    private float interval = -1.0f;
-    private float randomVariation;
+    private float m_Interval = -1.0f;
+    private float m_RandomVariation;
 
     public BTService(float interval, float randomVariation, System.Action service, BTNode decoratee) : base("Service", decoratee)
     {
         this.serviceMethod = service;
-        this.interval = interval;
-        this.randomVariation = randomVariation;
+        this.m_Interval = interval;
+        this.m_RandomVariation = randomVariation;
 
         this.Name = "" + (interval - randomVariation) + "..." + (interval + randomVariation) + "s";
     }
@@ -17,9 +17,9 @@
     public BTService(float interval, System.Action service, BTNode decoratee) : base("Service", decoratee)
     {
         this.serviceMethod = service;
-        this.interval = interval;
-        this.randomVariation = interval * 0.05f;
-        this.Name = "" + (interval - randomVariation) + "..." + (interval + randomVariation) + "s";
+        this.m_Interval = interval;
+        this.m_RandomVariation = interval * 0.05f;
+        this.Name = "" + (interval - m_RandomVariation) + "..." + (interval + m_RandomVariation) + "s";
     }
 
     public BTService(System.Action service, BTNode decoratee) : base("Service", decoratee)
@@ -30,35 +30,35 @@
 
     protected override void DoStart()
     {
-        if (this.interval <= 0f)
+        if (this.m_Interval <= 0f)
         {
             this.BTTimeMenter.AddUpdateObserver(serviceMethod);
             serviceMethod();
         }
-        else if (randomVariation <= 0f)
+        else if (m_RandomVariation <= 0f)
         {
-            this.BTTimeMenter.AddTimer(this.interval, -1, serviceMethod);
+            this.BTTimeMenter.AddTimer(this.m_Interval, -1, serviceMethod);
             serviceMethod();
         }
         else
         {
             InvokeServiceMethodWithRandomVariation();
         }
-        Decoratee.Start();
+        ChildNode.Start();
     }
 
     protected override void DoStop()
     {
-        Decoratee.Stop();
+        ChildNode.Stop();
     }
 
     protected override void DoChildStopped(BTNode child, bool result)
     {
-        if (this.interval <= 0f)
+        if (this.m_Interval <= 0f)
         {
             this.BTTimeMenter.RemoveUpdateObserver(serviceMethod);
         }
-        else if (randomVariation <= 0f)
+        else if (m_RandomVariation <= 0f)
         {
             this.BTTimeMenter.RemoveTimer(serviceMethod);
         }
@@ -72,6 +72,6 @@
     private void InvokeServiceMethodWithRandomVariation()
     {
         serviceMethod();
-        this.BTTimeMenter.AddTimer(interval, randomVariation, 0, InvokeServiceMethodWithRandomVariation);
+        this.BTTimeMenter.AddTimer(m_Interval, m_RandomVariation, 0, InvokeServiceMethodWithRandomVariation);
     }
 }

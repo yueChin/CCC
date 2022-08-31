@@ -6,12 +6,12 @@
 
     protected override void DoStart()
     {
-        Decoratee.Start();
+        ChildNode.Start();
     }
 
     protected override void DoStop()
     {
-        Decoratee.Stop();
+        ChildNode.Stop();
     }
 
     protected override void DoChildStopped(BTNode child, bool result)

@@ -1,17 +1,17 @@
 ﻿public class BTRandom : BTDecorator
 {
-    private float probability;
+    private float m_Probability;
 
     public BTRandom(float probability, BTNode decoratee) : base("Random", decoratee)
     {
-        this.probability = probability;
+        this.m_Probability = probability;
     }
 
     protected override void DoStart()
     {
-        if (UnityEngine.Random.value <= this.probability)
+        if (UnityEngine.Random.value <= this.m_Probability)
         {
-            Decoratee.Start();
+            ChildNode.Start();
         }
         else
         {
@@ -21,7 +21,7 @@
 
     protected override void DoStop()
     {
-        Decoratee.Stop();
+        ChildNode.Stop();
     }
 
     protected override void DoChildStopped(BTNode child, bool result)

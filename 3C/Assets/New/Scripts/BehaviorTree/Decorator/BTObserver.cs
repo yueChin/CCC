@@ -2,29 +2,29 @@ using System;
 
 public class BTObserver : BTDecorator
 {
-    private System.Action onStart;
-    private System.Action<bool> onStop;
+    private System.Action m_OnStart;
+    private System.Action<bool> m_OnStop;
 
     public BTObserver(System.Action onStart, System.Action<bool> onStop, BTNode decoratee) : base("Observer", decoratee)
     {
-        this.onStart = onStart;
-        this.onStop = onStop;
+        this.m_OnStart = onStart;
+        this.m_OnStop = onStop;
     }
 
     protected override void DoStart()
     {
-        this.onStart();
-        Decoratee.Start();
+        this.m_OnStart();
+        ChildNode.Start();
     }
 
     protected override void DoStop()
     {
-        Decoratee.Stop();
+        ChildNode.Stop();
     }
 
     protected override void DoChildStopped(BTNode child, bool result)
     {
-        this.onStop(result);
+        this.m_OnStop(result);
         Stopped(result);
     }
 }

@@ -1,22 +1,22 @@
 ﻿public abstract class BTDecorator : BTContainer
 {
-    protected BTNode Decoratee;
+    protected BTNode ChildNode;
 
     public BTDecorator(string name, BTNode decoratee) : base(name)
     {
-        this.Decoratee = decoratee;
-        this.Decoratee.SetParent(this);
+        this.ChildNode = decoratee;
+        this.ChildNode.SetParent(this);
     }
 
     public override void SetRoot(BTRootNode rootNode)
     {
         base.SetRoot(rootNode);
-        Decoratee.SetRoot(rootNode);
+        ChildNode.SetRoot(rootNode);
     }
 
     public override void ParentCompositeStopped(BTComposite composite)
     {
         base.ParentCompositeStopped(composite);
-        Decoratee.ParentCompositeStopped(composite);
+        ChildNode.ParentCompositeStopped(composite);
     }
 }

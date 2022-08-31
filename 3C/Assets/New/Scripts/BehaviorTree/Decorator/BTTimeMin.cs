@@ -39,16 +39,16 @@ public class BTTimeMin : BTDecorator
         m_IsDecorateeSuccess = false;
         m_IsLimitReached = false;
         BTTimeMenter.AddTimer(m_Limit, m_RandomVariation, 0, TimeoutReached);
-        Decoratee.Start();
+        ChildNode.Start();
     }
 
     protected override void DoStop()
     {
-        if (Decoratee.IsActive)
+        if (ChildNode.IsActive)
         {
             BTTimeMenter.RemoveTimer(TimeoutReached);
             m_IsLimitReached = true;
-            Decoratee.Stop();
+            ChildNode.Stop();
         }
         else
         {
@@ -81,7 +81,7 @@ public class BTTimeMin : BTDecorator
         }
         else
         {
-            Assert.IsTrue(Decoratee.IsActive);
+            Assert.IsTrue(ChildNode.IsActive);
         }
     }
 }

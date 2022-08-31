@@ -4,22 +4,22 @@ using UnityEngine.Assertions;
 
 public abstract class BTObservingDecorator : BTDecorator
 {
-    protected BTStops stopsOnChange;
-    private bool isObserving;
+    protected BTStops m_StopsOnChange;
+    private bool m_IsObserving;
 
-    public BTObservingDecorator(string name, BTStops stopsOnChange, BTNode decoratee) : base(name, decoratee)
+    public BTObservingDecorator(string name, BTStops m_StopsOnChange, BTNode decoratee) : base(name, decoratee)
     {
-        this.stopsOnChange = stopsOnChange;
-        this.isObserving = false;
+        this.m_StopsOnChange = m_StopsOnChange;
+        this.m_IsObserving = false;
     }
 
     protected override void DoStart()
     {
-        if (stopsOnChange != BTStops.NONE)
+        if (m_StopsOnChange != BTStops.NONE)
         {
-            if (!isObserving)
+            if (!m_IsObserving)
             {
-                isObserving = true;
+                m_IsObserving = true;
                 StartObserving();
             }
         }
@@ -30,23 +30,23 @@ public abstract class BTObservingDecorator : BTDecorator
         }
         else
         {
-            Decoratee.Start();
+            ChildNode.Start();
         }
     }
 
     protected override void DoStop()
     {
-        Decoratee.Stop();
+        ChildNode.Stop();
     }
 
     protected override void DoChildStopped(BTNode child, bool result)
     {
         Assert.AreNotEqual(this.CurrentState, State.INACTIVE);
-        if (stopsOnChange == BTStops.NONE || stopsOnChange == BTStops.SELF)
+        if (m_StopsOnChange == BTStops.NONE || m_StopsOnChange == BTStops.SELF)
         {
-            if (isObserving)
+            if (m_IsObserving)
             {
-                isObserving = false;
+                m_IsObserving = false;
                 StopObserving();
             }
         }
@@ -55,9 +55,9 @@ public abstract class BTObservingDecorator : BTDecorator
 
     protected override void DoParentCompositeStopped(BTComposite parentComposite)
     {
-        if (isObserving)
+        if (m_IsObserving)
         {
-            isObserving = false;
+            m_IsObserving = false;
             StopObserving();
         }
     }
@@ -66,7 +66,7 @@ public abstract class BTObservingDecorator : BTDecorator
     {
         if (IsActive && !IsConditionMet())
         {
-            if (stopsOnChange == BTStops.SELF || stopsOnChange == BTStops.BOTH || stopsOnChange == BTStops.IMMEDIATE_RESTART)
+            if (m_StopsOnChange == BTStops.SELF || m_StopsOnChange == BTStops.BOTH || m_StopsOnChange == BTStops.IMMEDIATE_RESTART)
             {
                 // Debug.Log( this.key + " stopped self ");
                 this.Stop();
@@ -74,7 +74,7 @@ public abstract class BTObservingDecorator : BTDecorator
         }
         else if (!IsActive && IsConditionMet())
         {
-            if (stopsOnChange == BTStops.LOWER_PRIORITY || stopsOnChange == BTStops.BOTH || stopsOnChange == BTStops.IMMEDIATE_RESTART || stopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART)
+            if (m_StopsOnChange == BTStops.LOWER_PRIORITY || m_StopsOnChange == BTStops.BOTH || m_StopsOnChange == BTStops.IMMEDIATE_RESTART || m_StopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART)
             {
                 // Debug.Log( this.key + " stopped other ");
                 BTContainer parentNode = this.Parent;
@@ -88,19 +88,19 @@ public abstract class BTObservingDecorator : BTDecorator
                 Assert.IsNotNull(childNode);
                 if (parentNode is BTParallel)
                 {
-                    Assert.IsTrue(stopsOnChange == BTStops.IMMEDIATE_RESTART, "On Parallel Nodes all children have the same priority, thus BTStops.LOWER_PRIORITY or BTStops.BOTH are unsupported in this context!");
+                    Assert.IsTrue(m_StopsOnChange == BTStops.IMMEDIATE_RESTART, "On Parallel Nodes all children have the same priority, thus BTStops.LOWER_PRIORITY or BTStops.BOTH are unsupported in this context!");
                 }
 
-                if (stopsOnChange == BTStops.IMMEDIATE_RESTART || stopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART)
+                if (m_StopsOnChange == BTStops.IMMEDIATE_RESTART || m_StopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART)
                 {
-                    if (isObserving)
+                    if (m_IsObserving)
                     {
-                        isObserving = false;
+                        m_IsObserving = false;
                         StopObserving();
                     }
                 }
 
-                ((BTComposite)parentNode).StopLowerPriorityChildrenForChild(childNode, stopsOnChange == BTStops.IMMEDIATE_RESTART || stopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART);
+                ((BTComposite)parentNode).StopLowerPriorityChildrenForChild(childNode, m_StopsOnChange == BTStops.IMMEDIATE_RESTART || m_StopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART);
             }
         }
     }

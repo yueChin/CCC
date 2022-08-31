@@ -14,7 +14,17 @@ public class BuffSystem
     private HashSet<Buff> m_DisableBuffList;
     private bool m_IsChange = false;
 
+    public BuffSystem()
+    {
+        
+    }
+    
     public BuffSystem(int priority = 0)
+    {
+        Priority = priority;
+    }
+
+    public void SetPriority(int priority)
     {
         Priority = priority;
     }
@@ -90,11 +100,13 @@ public class BuffSystem
                 continue;
             if (!m_StartedBuffDict.ContainsKey(buff.BuffId))
             {
+                buff.Start();
                 m_StartedBuffDict.Add(buff.BuffId, buff);
             }
-            buff.Start();
+            buff.OnEnable();
             m_RunBuffList.Add(buff);
         }
+        m_EnableBuffSet.Clear();
 
         foreach (Buff buff in m_DisableBuffList)
         {
@@ -156,8 +168,11 @@ public class BuffSystem
 
     public void RemoveBuff(Buff buff)
     {
-        m_IsChange = true;
-        m_RemoveBuffSet.Add(buff);
+        if (!m_RemoveBuffSet.Contains(buff) && m_RunBuffList.Contains(buff))
+        {
+            m_IsChange = true;
+            m_RemoveBuffSet.Add(buff);
+        }
     }
 
     public void EnableBuff(int id)

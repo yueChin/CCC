@@ -12,6 +12,7 @@ public class BTRootNode : BTDecorator , ILifeCycle
         BTEntryNode = node;
         BlckBoard = bb;
         TimeMenter = GameLoop.Instace.GetGameMoudle<BTContent>().BtTimeMenter;
+        ChildNode.SetRoot(this);
     } 
     
     public override void Awake()
@@ -30,6 +31,7 @@ public class BTRootNode : BTDecorator , ILifeCycle
     protected override void DoStart()
     {
         base.DoStart();
+        BTEntryNode.Start();
         BlckBoard.Enable();
     }
 

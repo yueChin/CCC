@@ -9,11 +9,12 @@ public class BTContent : IGameMoudle,ILifeCycle
     public BTTimeMenter BtTimeMenter => m_BtTimeMenter;
     public BTContent()
     {
-        m_BtTimeMenter = new BTTimeMenter();
     }
     
     public void Awake()
     {
+        m_BtTimeMenter = new BTTimeMenter();
+        m_BtTimeMenter.Awake();
         m_Blackboards = new Dictionary<string, BlackBoard>();
     }
 

@@ -1,13 +1,13 @@
 ﻿public class BTRepeater : BTDecorator
 {
-    private int loopCount = -1;
-    private int currentLoop;
+    private int m_LoopCount = -1;
+    private int m_CurrentLoop;
 
     /// <param name="loopCount">number of times to execute the decoratee. Set to -1 to repeat forever, be careful with endless loops!</param>
     /// <param name="decoratee">Decorated BTNode</param>
     public BTRepeater(int loopCount, BTNode decoratee) : base("Repeater", decoratee)
     {
-        this.loopCount = loopCount;
+        this.m_LoopCount = loopCount;
     }
 
     /// <param name="decoratee">Decorated BTNode, repeated forever</param>
@@ -17,10 +17,10 @@
 
     protected override void DoStart()
     {
-        if (loopCount != 0)
+        if (m_LoopCount != 0)
         {
-            currentLoop = 0;
-            Decoratee.Start();
+            m_CurrentLoop = 0;
+            ChildNode.Start();
         }
         else
         {
@@ -30,11 +30,11 @@
 
     protected override void DoStop()
     {
-        this.BTTimeMenter.RemoveTimer(restartDecoratee);
+        this.BTTimeMenter.RemoveTimer(RestartDecoratee);
 
-        if (Decoratee.IsActive)
+        if (ChildNode.IsActive)
         {
-            Decoratee.Stop();
+            ChildNode.Stop();
         }
         else
         {
@@ -46,13 +46,13 @@
     {
         if (result)
         {
-            if (IsStopRequested || (loopCount > 0 && ++currentLoop >= loopCount))
+            if (IsStopRequested || (m_LoopCount > 0 && ++m_CurrentLoop >= m_LoopCount))
             {
                 Stopped(true);
             }
             else
             {
-                this.BTTimeMenter.AddTimer(0, 0, restartDecoratee);
+                this.BTTimeMenter.AddTimer(0, 0, RestartDecoratee);
             }
         }
         else
@@ -61,8 +61,8 @@
         }
     }
 
-    protected void restartDecoratee()
+    protected void RestartDecoratee()
     {
-        Decoratee.Start();
+        ChildNode.Start();
     }
 }

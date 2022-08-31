@@ -97,6 +97,14 @@ public class CMBody : MonoBehaviour,IWorldBody
         fsm.AddState(skyState);
         fsm.Init();
         m_BodyFSM = fsm;
+
+        BuffSystemManager buffSystemManager = GameLoop.Instace.GetGameMoudle<BuffSystemManager>();
+        BuffSystem buffSystem = buffSystemManager.FetchSystem<BuffSystem>();
+        buffSystem.SetPriority(0);
+        GravityBuff gravityBuff = new GravityBuff(1);
+        gravityBuff.SetT(this);
+        buffSystem.AddBuff(gravityBuff);
+        buffSystemManager.AddBuffSystem(buffSystem);
         
         this.LegalPosition = this.m_Transform.position;
         this.AdjustPosition();
