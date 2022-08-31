@@ -9,6 +9,8 @@ public class FSMState :ILifeCycle
     public virtual int StateID { get; protected set; }
     public virtual int[] MaskIDs { get; protected set; } = null;
     public FSM FSM { get; protected set; }
+
+    public Type StateType { get;protected set; }
     
     public FSMState(int id,string name = null)
     {
@@ -43,6 +45,18 @@ public class FSMState :ILifeCycle
     public virtual void Destroy()
     {
         FSM = null;
+    }
+
+    public virtual Type Type()
+    {
+        if (StateType != null)
+        {
+            return StateType;
+        }
+
+        StateType = GetType();
+        
+        return StateType;
     }
 }
 

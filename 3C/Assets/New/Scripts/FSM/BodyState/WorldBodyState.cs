@@ -19,12 +19,11 @@ public class WorldBodyState : FSMState<CMBody>
     public static WorldBodySetting WorldBodySets { get; protected set; }
 
     public RaycastHit HitInfo => m_Hit;
-    
+
     public WorldBodyState(int id, string name = "SkyState") : base(id, name)
     {
-        
     }
-
+    
     public void SetOffset(float minRange,float stepOffset)
     {
         WorldBodySets = new WorldBodySetting()

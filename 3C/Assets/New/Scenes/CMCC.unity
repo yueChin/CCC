@@ -2129,7 +2129,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1602292248}
-  m_LocalRotation: {x: 0.12422062, y: 0.00000001707311, z: -0.0000000021373872, w: 0.9922547}
+  m_LocalRotation: {x: 0.12422062, y: -0.000000017073113, z: 0.0000000021373876, w: 0.9922547}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2269,6 +2269,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stepOffset: 0.1
   angleLimit: 45
+  VelocityDamping: 0.5
   neck: {fileID: 1239290088}
   rotationSettings:
     MinPitchAngle: -45
@@ -2282,7 +2283,6 @@ MonoBehaviour:
     MaxHorizontalSpeed: 8
     JumpSpeed: 10
     JumpAbortSpeed: 10
-  VelocityDamping: 0.5
 --- !u!114 &1606516606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2892,7 +2892,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1886381212}
-  m_LocalRotation: {x: 0.14220111, y: -0.000000008515764, z: 0.0000000012233834, w: 0.9898378}
+  m_LocalRotation: {x: 0.14220111, y: 0.000000008515764, z: -0.0000000012233834, w: 0.9898378}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

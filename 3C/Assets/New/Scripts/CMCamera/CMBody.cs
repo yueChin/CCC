@@ -69,7 +69,7 @@ public class CMBody : MonoBehaviour,IWorldBody
 
     public BoxCollider BoxCollider => m_Collider;
 
-    private FSM<CMBody> m_BodyFSM;
+    public FSM<CMBody> BodyFSM { get; private set; }
     
     protected virtual void Awake()
     {
@@ -96,7 +96,7 @@ public class CMBody : MonoBehaviour,IWorldBody
         fsm.AddState(state);
         fsm.AddState(skyState);
         fsm.Init();
-        m_BodyFSM = fsm;
+        BodyFSM = fsm;
 
         BuffSystemManager buffSystemManager = GameLoop.Instace.GetGameMoudle<BuffSystemManager>();
         BuffSystem buffSystem = buffSystemManager.FetchSystem<BuffSystem>();
@@ -113,7 +113,7 @@ public class CMBody : MonoBehaviour,IWorldBody
 
     protected virtual void FixedUpdate()
     {
-        GravtyUpdate();
+        //GravtyUpdate();
         PhysicVelocity();
         PhysicPostion();
     }
@@ -192,16 +192,16 @@ public class CMBody : MonoBehaviour,IWorldBody
                     this.m_Drop = Vector3.zero;
                     this.CheckLegalPosition(hit, position);
                 }
-                m_BodyFSM.SwitchTo((int)WorldBodyState.IsGround.IsInGround);
+                BodyFSM.SwitchTo((int)WorldBodyState.IsGround.IsInGround);
             }
             else
             {
-                m_BodyFSM.SwitchTo((int)WorldBodyState.IsGround.IsInSky);
+                BodyFSM.SwitchTo((int)WorldBodyState.IsGround.IsInSky);
             }
         }
         else
         {
-            m_BodyFSM.SwitchTo((int)WorldBodyState.IsGround.IsInSky);
+            BodyFSM.SwitchTo((int)WorldBodyState.IsGround.IsInSky);
             this.IsGrounded = false;
             this.Normal = Vector3.up;
             this.m_GroundY = position.y;

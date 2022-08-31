@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class FSM: ILifeCycle
@@ -123,7 +124,6 @@ public class FSM: ILifeCycle
             CurtState = FsmStateStack.Peek();
         }
     }
-    
 }
 
 public class FSM<T> : FSM
