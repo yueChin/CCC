@@ -14,6 +14,7 @@ public class BuffSystem
     private HashSet<Buff> m_DisableBuffList;
     private bool m_IsChange = false;
 
+    public BTTimeMenter BtTimeMenter { get; protected set; }
     public BuffSystem()
     {
         
@@ -29,7 +30,7 @@ public class BuffSystem
         Priority = priority;
     }
     
-    public void Awake()
+    public virtual void Awake()
     {
         AllBuffDict = new Dictionary<int, Buff>();
         m_StartedBuffDict = new Dictionary<int, Buff>();
@@ -41,7 +42,7 @@ public class BuffSystem
         m_DisableBuffList = new HashSet<Buff>();
     }
 
-    public void Destroy()
+    public virtual void Destroy()
     {
         foreach (Buff buff in AllBuffDict.Values)
         {
@@ -66,7 +67,7 @@ public class BuffSystem
         m_DisableBuffList = null;
     }
 
-    public void Tick(float timeDelta)
+    public virtual void Tick(float timeDelta)
     {
         foreach (Buff buff in m_RunBuffList)
         {

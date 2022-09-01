@@ -6,7 +6,7 @@ public class GravityBuff :Buff<CMBody>
     private Type m_GroudType;
     private Type m_SkyType;
     private CMEaseMove m_GrivityEase;
-    public GravityBuff(int id) : base(id)
+    public GravityBuff(int id,BuffSystem buffSystem) : base(id,buffSystem)
     {
         m_GroudType = typeof(GroundState);
         m_SkyType = typeof(SkyState);
@@ -16,7 +16,7 @@ public class GravityBuff :Buff<CMBody>
     public override void OnEnable()
     {
         base.OnEnable();
-        BlackBoard bb = new BlackBoard(GameLoop.Instace.GetFixedGameMoudle<BTContent>().BtTimeMenter);
+        BlackBoard bb = new BlackBoard(BuffSystem.BtTimeMenter);
         BTNode action = new BTAction(DoGravity);
         BTNode rept = new BTRepeater(-1, action);
         RootNode = new BTRootNode(bb,rept);

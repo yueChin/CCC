@@ -3,9 +3,11 @@
     public int BuffId;
     public int Priority;
     public BTRootNode RootNode;
-    public Buff(int id,int priority = 0)
+    public BuffSystem BuffSystem { get; protected set; }
+    public Buff(int id,BuffSystem buffSystem,int priority = 0)
     {
         BuffId = id;
+        BuffSystem = buffSystem;
         Priority = priority;
     }
 
@@ -55,7 +57,7 @@ public class Buff<T> : Buff
         BuffData1 = data;
     }
 
-    public Buff(int id) : base(id)
+    public Buff(int id,BuffSystem buffSystem) : base(id,buffSystem)
     {
     }
 }
@@ -69,7 +71,7 @@ public class Buff<T1,T2> : Buff<T1>
         BuffData2 = data;
     }
 
-    public Buff(int id) : base(id)
+    public Buff(int id,BuffSystem buffSystem) : base(id,buffSystem)
     {
     }
 }
@@ -83,7 +85,7 @@ public class Buff<T1,T2,T3> : Buff<T1,T2>
         BuffData3 = data;
     }
 
-    public Buff(int id) : base(id)
+    public Buff(int id,BuffSystem buffSystem) : base(id,buffSystem)
     {
     }
 }
@@ -97,7 +99,7 @@ public class Buff<T1,T2,T3,T4> : Buff<T1,T2,T3>
         BuffData4 = data;
     }
 
-    public Buff(int id) : base(id)
+    public Buff(int id,BuffSystem buffSystem) : base(id,buffSystem)
     {
     }
 }
@@ -111,7 +113,7 @@ public class Buff<T1,T2,T3,T4,T5> : Buff<T1,T2,T3,T4>
         BuffData5 = data;
     }
 
-    public Buff(int id) : base(id)
+    public Buff(int id,BuffSystem buffSystem) : base(id,buffSystem)
     {
     }
 }
@@ -125,7 +127,7 @@ public class Buff<T1,T2,T3,T4,T5,T6> : Buff<T1,T2,T3,T4,T5>
         BuffData6 = data;
     }
 
-    public Buff(int id) : base(id)
+    public Buff(int id,BuffSystem buffSystem) : base(id,buffSystem)
     {
     }
 }
@@ -139,7 +141,7 @@ public class Buff<T1,T2,T3,T4,T5,T6,T7> : Buff<T1,T2,T3,T4,T5,T6>
         BuffData7 = data;
     }
 
-    public Buff(int id) : base(id)
+    public Buff(int id,BuffSystem buffSystem) : base(id,buffSystem)
     {
     }
 }
@@ -153,7 +155,7 @@ public class Buff<T1,T2,T3,T4,T5,T6,T7,T8> : Buff<T1,T2,T3,T4,T5,T6,T7>
         BuffData8 = data;
     }
 
-    public Buff(int id) : base(id)
+    public Buff(int id,BuffSystem buffSystem) : base(id,buffSystem)
     {
     }
 }

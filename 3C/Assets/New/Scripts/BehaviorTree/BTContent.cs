@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using Unity.VisualScripting;
 
-public class BTContent : IGameMoudle,ILifeCycle
+public class BTContent : IGameMoudle
 {
     private Dictionary<string, BlackBoard> m_Blackboards ;
-
     private  BTTimeMenter m_BtTimeMenter;
     public BTTimeMenter BtTimeMenter => m_BtTimeMenter;
     public BTContent()
@@ -35,7 +34,7 @@ public class BTContent : IGameMoudle,ILifeCycle
         m_BtTimeMenter.Tick(timedelta);
     }
     
-    public BlackBoard GetBlackboard(string key)
+    public BlackBoard FetchBlackboard(string key)
     {
         if (!m_Blackboards.ContainsKey(key))
         {
@@ -47,6 +46,6 @@ public class BTContent : IGameMoudle,ILifeCycle
     public static BlackBoard GetSharedBlackboard(string key)
     {
         BTContent btc = GameLoop.Instace.GetGameMoudle<BTContent>();
-        return btc.GetBlackboard(key);
+        return btc.FetchBlackboard(key);
     }
 }

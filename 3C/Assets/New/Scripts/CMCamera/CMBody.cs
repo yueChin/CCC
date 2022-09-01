@@ -101,7 +101,7 @@ public class CMBody : MonoBehaviour,IWorldBody
         BuffSystemManager buffSystemManager = GameLoop.Instace.GetGameMoudle<BuffSystemManager>();
         GravityBuffSystem buffSystem = buffSystemManager.FetchSystem<GravityBuffSystem>();
         buffSystem.SetPriority(0);
-        GravityBuff gravityBuff = new GravityBuff(1);
+        GravityBuff gravityBuff = new GravityBuff(1,buffSystem);
         gravityBuff.SetT(this);
         buffSystem.AddBuff(gravityBuff);
         buffSystemManager.AddBuffSystem(buffSystem);

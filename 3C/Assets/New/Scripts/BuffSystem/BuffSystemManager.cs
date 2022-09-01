@@ -6,9 +6,16 @@ public class BuffSystemManager : IGameMoudle
     private HashSet<BuffSystem> m_AddBuffSystemSet;
     private HashSet<BuffSystem> m_RemoveBuffSystemSet;
     private bool m_IsChange = false;
-    
+    public BTContent BtContent { get; private set; }
+
+    public BuffSystemManager()
+    {
+        BtContent = new BTContent();
+    }
+
     public void Awake()
     {
+        BtContent.Awake();
         BuffSystemList = new List<BuffSystem>();
         m_AddBuffSystemSet = new HashSet<BuffSystem>();
         m_RemoveBuffSystemSet = new HashSet<BuffSystem>();
@@ -16,6 +23,7 @@ public class BuffSystemManager : IGameMoudle
 
     public void Destroy()
     {
+        BtContent.Destroy();
         foreach (BuffSystem buffSystem in BuffSystemList)
         {
             buffSystem.Destroy();
@@ -26,6 +34,8 @@ public class BuffSystemManager : IGameMoudle
 
     public void Tick(float deltaTime)
     {
+        BtContent.Tick(deltaTime);
+        
         foreach (BuffSystem buffSystem in BuffSystemList)
         {
             if (m_RemoveBuffSystemSet.Contains(buffSystem))
