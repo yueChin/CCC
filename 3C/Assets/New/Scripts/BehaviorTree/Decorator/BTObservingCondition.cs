@@ -6,21 +6,21 @@ public class BTObservingCondition : BTObservingDecorator
     private float m_CheckInterval;
     private float m_CheckVariance;
 
-    public BTObservingCondition(Func<bool> condition, BTNode decoratee) : base("Condition", BTStops.NONE, decoratee)
+    public BTObservingCondition(Func<bool> condition, BTNode childNode) : base("Condition", BTStops.NONE, childNode)
     {
         this.m_Condition = condition;
         this.m_CheckInterval = 0.0f;
         this.m_CheckVariance = 0.0f;
     }
 
-    public BTObservingCondition(Func<bool> condition, BTStops stopsOnChange, BTNode decoratee) : base("Condition", stopsOnChange, decoratee)
+    public BTObservingCondition(Func<bool> condition, BTStops stopsOnChange, BTNode childNode) : base("Condition", stopsOnChange, childNode)
     {
         this.m_Condition = condition;
         this.m_CheckInterval = 0.0f;
         this.m_CheckVariance = 0.0f;
     }
 
-    public BTObservingCondition(Func<bool> condition, BTStops stopsOnChange, float checkInterval, float randomVariance, BTNode decoratee) : base("Condition", stopsOnChange, decoratee)
+    public BTObservingCondition(Func<bool> condition, BTStops stopsOnChange, float checkInterval, float randomVariance, BTNode childNode) : base("Condition", stopsOnChange, childNode)
     {
         this.m_Condition = condition;
         this.m_CheckInterval = checkInterval;

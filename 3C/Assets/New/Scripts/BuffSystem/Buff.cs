@@ -9,10 +9,13 @@
         BuffId = id;
         BuffSystem = buffSystem;
         Priority = priority;
+        //BuffSystem.AddBuff(this);
     }
 
     public virtual void Awake()
     {
+        //TODO Fetch init 
+        //BuffSystem.AddBuff(this);
     }
 
     public virtual void Destroy()

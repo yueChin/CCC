@@ -2,7 +2,7 @@
 
 public class BTCooldown : BTDecorator
 {
-    public bool m_StartAfterDecoratee = false;
+    public bool StartAfterDecoratee = false;
     private bool m_ResetOnFailiure = false;
 	private bool m_FailOnCooldown = false;
     private float m_CooldownTime = 0.0f;
@@ -22,13 +22,13 @@ public class BTCooldown : BTDecorator
     /// </summary>
     /// <param name="cooldownTime">time until next execution</param>
     /// <param name="randomVariation">random variation added to the cooldown time</param>
-    /// <param name="m_StartAfterDecoratee">If set to <c>true</c> the cooldown timer is started from the point after the decoratee has been started, else it will be started right away.</param>
+    /// <param name="startAfterDecoratee">If set to <c>true</c> the cooldown timer is started from the point after the decoratee has been started, else it will be started right away.</param>
     /// <param name="resetOnFailiure">If set to <c>true</c> the timer will be reset in case the underlying node fails.</param>
     /// <param name="failOnCooldown">If currently on cooldown and this parameter is set to <c>true</c>, the decorator will immmediately fail instead of waiting for the cooldown.</param>
-    /// <param name="decoratee">Decoratee node.</param>
-    public BTCooldown(float cooldownTime, float randomVariation, bool m_StartAfterDecoratee, bool resetOnFailiure, bool failOnCooldown, BTNode decoratee) : base("TimeCooldown", decoratee)
+    /// <param name="childNode">Decoratee node.</param>
+    public BTCooldown(float cooldownTime, float randomVariation, bool startAfterDecoratee, bool resetOnFailiure, bool failOnCooldown, BTNode childNode) : base("TimeCooldown", childNode)
     {
-        this.m_StartAfterDecoratee = m_StartAfterDecoratee;
+        this.StartAfterDecoratee = startAfterDecoratee;
         this.m_CooldownTime = cooldownTime;
         this.m_ResetOnFailiure = resetOnFailiure;
         this.m_RandomVariation = randomVariation;
@@ -36,9 +36,9 @@ public class BTCooldown : BTDecorator
         Assert.IsTrue(cooldownTime > 0f, "cooldownTime has to be set");
     }
 
-    public BTCooldown(float cooldownTime, bool m_StartAfterDecoratee, bool resetOnFailiure, bool failOnCooldown, BTNode decoratee) : base("TimeCooldown", decoratee)
+    public BTCooldown(float cooldownTime, bool startAfterDecoratee, bool resetOnFailiure, bool failOnCooldown, BTNode childNode) : base("TimeCooldown", childNode)
     {
-        this.m_StartAfterDecoratee = m_StartAfterDecoratee;
+        this.StartAfterDecoratee = startAfterDecoratee;
         this.m_CooldownTime = cooldownTime;
         this.m_RandomVariation = cooldownTime * 0.1f;
         this.m_ResetOnFailiure = resetOnFailiure;
@@ -46,36 +46,36 @@ public class BTCooldown : BTDecorator
         Assert.IsTrue(cooldownTime > 0f, "cooldownTime has to be set");
     }
 
-    public BTCooldown(float cooldownTime, float randomVariation, bool m_StartAfterDecoratee, bool resetOnFailiure, BTNode decoratee) : base("TimeCooldown", decoratee)
+    public BTCooldown(float cooldownTime, float randomVariation, bool startAfterDecoratee, bool resetOnFailiure, BTNode childNode) : base("TimeCooldown", childNode)
     {
-        this.m_StartAfterDecoratee = m_StartAfterDecoratee;
+        this.StartAfterDecoratee = startAfterDecoratee;
         this.m_CooldownTime = cooldownTime;
         this.m_ResetOnFailiure = resetOnFailiure;
         this.m_RandomVariation = randomVariation;
         Assert.IsTrue(cooldownTime > 0f, "cooldownTime has to be set");
     }
 
-    public BTCooldown(float cooldownTime, bool m_StartAfterDecoratee, bool resetOnFailiure, BTNode decoratee) : base("TimeCooldown", decoratee)
+    public BTCooldown(float cooldownTime, bool startAfterDecoratee, bool resetOnFailiure, BTNode childNode) : base("TimeCooldown", childNode)
     {
-        this.m_StartAfterDecoratee = m_StartAfterDecoratee;
+        this.StartAfterDecoratee = startAfterDecoratee;
         this.m_CooldownTime = cooldownTime;
         this.m_RandomVariation = cooldownTime * 0.1f;
         this.m_ResetOnFailiure = resetOnFailiure;
         Assert.IsTrue(cooldownTime > 0f, "cooldownTime has to be set");
     }
 
-    public BTCooldown(float cooldownTime, float randomVariation, BTNode decoratee) : base("TimeCooldown", decoratee)
+    public BTCooldown(float cooldownTime, float randomVariation, BTNode childNode) : base("TimeCooldown", childNode)
     {
-        this.m_StartAfterDecoratee = false;
+        this.StartAfterDecoratee = false;
         this.m_CooldownTime = cooldownTime;
         this.m_ResetOnFailiure = false;
         this.m_RandomVariation = randomVariation;
         Assert.IsTrue(cooldownTime > 0f, "cooldownTime has to be set");
     }
 
-    public BTCooldown(float cooldownTime, BTNode decoratee) : base("TimeCooldown", decoratee)
+    public BTCooldown(float cooldownTime, BTNode childNode) : base("TimeCooldown", childNode)
     {
-        this.m_StartAfterDecoratee = false;
+        this.StartAfterDecoratee = false;
         this.m_CooldownTime = cooldownTime;
         this.m_ResetOnFailiure = false;
         this.m_RandomVariation = cooldownTime * 0.1f;
@@ -87,7 +87,7 @@ public class BTCooldown : BTDecorator
         if (m_IsReady)
         {
             m_IsReady = false;
-            if (!m_StartAfterDecoratee)
+            if (!StartAfterDecoratee)
             {
                 BTTimeMenter.AddTimer(m_CooldownTime, m_RandomVariation, 0, TimeoutReached);
             }
@@ -125,7 +125,7 @@ public class BTCooldown : BTDecorator
             m_IsReady = true;
             BTTimeMenter.RemoveTimer(TimeoutReached);
         }
-        else if (m_StartAfterDecoratee)
+        else if (StartAfterDecoratee)
         {
             BTTimeMenter.AddTimer(m_CooldownTime, m_RandomVariation, 0, TimeoutReached);
         }

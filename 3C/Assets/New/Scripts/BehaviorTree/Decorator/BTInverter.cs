@@ -1,6 +1,6 @@
 ﻿public class BTInverter : BTDecorator
 {
-    public BTInverter(BTNode decoratee) : base("Inverter", decoratee)
+    public BTInverter(BTNode childNode) : base("Inverter", childNode)
     {
     }
 

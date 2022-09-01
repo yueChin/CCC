@@ -9,7 +9,7 @@ public class BTTimeMin : BTDecorator
     private bool m_IsDecorateeDone = false;
     private bool m_IsDecorateeSuccess = false;
 
-    public BTTimeMin(float limit, BTNode decoratee) : base("TimeMin", decoratee)
+    public BTTimeMin(float limit, BTNode childNode) : base("TimeMin", childNode)
     {
         this.m_Limit = limit;
         this.m_RandomVariation = this.m_Limit * 0.05f;

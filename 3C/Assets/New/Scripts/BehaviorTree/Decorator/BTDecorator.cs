@@ -2,9 +2,9 @@
 {
     protected BTNode ChildNode;
 
-    public BTDecorator(string name, BTNode decoratee) : base(name)
+    public BTDecorator(string name, BTNode childNode) : base(name)
     {
-        this.ChildNode = decoratee;
+        this.ChildNode = childNode;
         this.ChildNode.SetParent(this);
     }
 

@@ -1,30 +1,30 @@
 ﻿public class BTService : BTDecorator
 {
-    private System.Action serviceMethod;
+    private System.Action m_ServiceMethod;
 
     private float m_Interval = -1.0f;
     private float m_RandomVariation;
 
-    public BTService(float interval, float randomVariation, System.Action service, BTNode decoratee) : base("Service", decoratee)
+    public BTService(float interval, float randomVariation, System.Action service, BTNode childNode) : base("Service", childNode)
     {
-        this.serviceMethod = service;
+        this.m_ServiceMethod = service;
         this.m_Interval = interval;
         this.m_RandomVariation = randomVariation;
 
         this.Name = "" + (interval - randomVariation) + "..." + (interval + randomVariation) + "s";
     }
 
-    public BTService(float interval, System.Action service, BTNode decoratee) : base("Service", decoratee)
+    public BTService(float interval, System.Action service, BTNode childNode) : base("Service", childNode)
     {
-        this.serviceMethod = service;
+        this.m_ServiceMethod = service;
         this.m_Interval = interval;
         this.m_RandomVariation = interval * 0.05f;
         this.Name = "" + (interval - m_RandomVariation) + "..." + (interval + m_RandomVariation) + "s";
     }
 
-    public BTService(System.Action service, BTNode decoratee) : base("Service", decoratee)
+    public BTService(System.Action service, BTNode childNode) : base("Service", childNode)
     {
-        this.serviceMethod = service;
+        this.m_ServiceMethod = service;
         this.Name = "every tick";
     }
 
@@ -32,13 +32,13 @@
     {
         if (this.m_Interval <= 0f)
         {
-            this.BTTimeMenter.AddUpdateObserver(serviceMethod);
-            serviceMethod();
+            this.BTTimeMenter.AddUpdateObserver(m_ServiceMethod);
+            m_ServiceMethod();
         }
         else if (m_RandomVariation <= 0f)
         {
-            this.BTTimeMenter.AddTimer(this.m_Interval, -1, serviceMethod);
-            serviceMethod();
+            this.BTTimeMenter.AddTimer(this.m_Interval, -1, m_ServiceMethod);
+            m_ServiceMethod();
         }
         else
         {
@@ -56,11 +56,11 @@
     {
         if (this.m_Interval <= 0f)
         {
-            this.BTTimeMenter.RemoveUpdateObserver(serviceMethod);
+            this.BTTimeMenter.RemoveUpdateObserver(m_ServiceMethod);
         }
         else if (m_RandomVariation <= 0f)
         {
-            this.BTTimeMenter.RemoveTimer(serviceMethod);
+            this.BTTimeMenter.RemoveTimer(m_ServiceMethod);
         }
         else
         {
@@ -71,7 +71,7 @@
 
     private void InvokeServiceMethodWithRandomVariation()
     {
-        serviceMethod();
+        m_ServiceMethod();
         this.BTTimeMenter.AddTimer(m_Interval, m_RandomVariation, 0, InvokeServiceMethodWithRandomVariation);
     }
 }

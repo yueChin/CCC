@@ -86,8 +86,16 @@ public class BuffSystemManager : IGameMoudle
 
     public T FetchSystem<T>() where T : BuffSystem,new()
     {
+        foreach (BuffSystem buffSystem in BuffSystemList)
+        {
+            if (buffSystem.SystemType == typeof(T))
+            {
+                return buffSystem as T;
+            }
+        }
         T t = new T();
         t.Awake();
+        //AddBuffSystem(t);
         return t;
     }
     

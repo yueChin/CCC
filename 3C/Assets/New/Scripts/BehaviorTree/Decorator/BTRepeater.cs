@@ -4,14 +4,14 @@
     private int m_CurrentLoop;
 
     /// <param name="loopCount">number of times to execute the decoratee. Set to -1 to repeat forever, be careful with endless loops!</param>
-    /// <param name="decoratee">Decorated BTNode</param>
-    public BTRepeater(int loopCount, BTNode decoratee) : base("Repeater", decoratee)
+    /// <param name="childNode">Decorated BTNode</param>
+    public BTRepeater(int loopCount, BTNode childNode) : base("Repeater", childNode)
     {
         this.m_LoopCount = loopCount;
     }
 
-    /// <param name="decoratee">Decorated BTNode, repeated forever</param>
-    public BTRepeater(BTNode decoratee) : base("Repeater", decoratee)
+    /// <param name="childNode">Decorated BTNode, repeated forever</param>
+    public BTRepeater(BTNode childNode) : base("Repeater", childNode)
     {
     }
 

@@ -7,7 +7,7 @@ public class BTTimeMax : BTDecorator
     private bool m_WaitForChildButFailOnLimitReached = false;
     private bool m_IsLimitReached = false;
 
-    public BTTimeMax(float limit, bool waitForChildButFailOnLimitReached, BTNode decoratee) : base("TimeMax", decoratee)
+    public BTTimeMax(float limit, bool waitForChildButFailOnLimitReached, BTNode childNode) : base("TimeMax", childNode)
     {
         this.m_Limit = limit;
         this.m_RandomVariation = limit * 0.05f;

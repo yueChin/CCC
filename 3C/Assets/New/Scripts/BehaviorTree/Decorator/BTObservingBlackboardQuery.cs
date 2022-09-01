@@ -5,7 +5,7 @@
         private string[] m_Keys;
         private System.Func<bool> m_Query;
 
-        public BTObservingBlackboardQuery(string[] keys, BTStops stopsOnChange, System.Func<bool> query, BTNode decoratee) : base("BlackboardQuery", stopsOnChange, decoratee)
+        public BTObservingBlackboardQuery(string[] keys, BTStops stopsOnChange, System.Func<bool> query, BTNode childNode) : base("BlackboardQuery", stopsOnChange, childNode)
         {
             this.m_Keys = keys;
             this.m_Query = query;
@@ -15,7 +15,7 @@
         {
             foreach (string key in this.m_Keys)
             {
-                this.RootNode.BlackBoard.AddObserver(key, onValueChanged);
+                this.RootNode.BlackBoard.AddObserver(key, OnValueChanged);
             }
         }
 
@@ -23,11 +23,11 @@
         {
             foreach (string key in this.m_Keys)
             {
-                this.RootNode.BlackBoard.RemoveObserver(key, onValueChanged);
+                this.RootNode.BlackBoard.RemoveObserver(key, OnValueChanged);
             }
         }
 
-        private void onValueChanged(BlackBoard.Type type, object newValue)
+        private void OnValueChanged(BlackBoard.Type type, object newValue)
         {
             Evaluate();
         }

@@ -98,7 +98,16 @@ public class CMController : MonoBehaviour
     {
         if (jump)
         {
-            this.m_JumpMove.Enter(0.7f, 0.05f, Vector3.up);
+            //this.m_JumpMove.Enter(0.7f, 0.05f, Vector3.up);
+            
+            BuffSystemManager buffSystemManager = GameLoop.Instace.GetGameMoudle<BuffSystemManager>();
+            MoveBuffSystem buffSystem = buffSystemManager.FetchSystem<MoveBuffSystem>();
+            buffSystem.SetPriority(1);
+            MoveBuff moveBuff = new MoveBuff(1,buffSystem);
+            moveBuff.SetT(Body);
+            moveBuff.SetEaseEnter(0.7f, 0.05f, Vector3.up);
+            buffSystem.AddBuff(moveBuff);
+            buffSystemManager.AddBuffSystem(buffSystem);
         }
     }
 

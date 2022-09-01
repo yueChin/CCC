@@ -1,6 +1,6 @@
 ﻿public class BTFailer : BTDecorator
 {
-    public BTFailer(BTNode decoratee) : base("Failer", decoratee)
+    public BTFailer(BTNode childNode) : base("Failer", childNode)
     {
     }
 

@@ -4,18 +4,18 @@ using UnityEngine.Assertions;
 
 public abstract class BTObservingDecorator : BTDecorator
 {
-    protected BTStops m_StopsOnChange;
+    protected BTStops StopsOnChange;
     private bool m_IsObserving;
 
-    public BTObservingDecorator(string name, BTStops m_StopsOnChange, BTNode decoratee) : base(name, decoratee)
+    public BTObservingDecorator(string name, BTStops stopsOnChange, BTNode childNode) : base(name, childNode)
     {
-        this.m_StopsOnChange = m_StopsOnChange;
+        this.StopsOnChange = stopsOnChange;
         this.m_IsObserving = false;
     }
 
     protected override void OnEnable()
     {
-        if (m_StopsOnChange != BTStops.NONE)
+        if (StopsOnChange != BTStops.NONE)
         {
             if (!m_IsObserving)
             {
@@ -42,7 +42,7 @@ public abstract class BTObservingDecorator : BTDecorator
     protected override void DoChildStopped(BTNode child, bool result)
     {
         Assert.AreNotEqual(this.CurrentState, State.INACTIVE);
-        if (m_StopsOnChange == BTStops.NONE || m_StopsOnChange == BTStops.SELF)
+        if (StopsOnChange == BTStops.NONE || StopsOnChange == BTStops.SELF)
         {
             if (m_IsObserving)
             {
@@ -66,7 +66,7 @@ public abstract class BTObservingDecorator : BTDecorator
     {
         if (IsActive && !IsConditionMet())
         {
-            if (m_StopsOnChange == BTStops.SELF || m_StopsOnChange == BTStops.BOTH || m_StopsOnChange == BTStops.IMMEDIATE_RESTART)
+            if (StopsOnChange == BTStops.SELF || StopsOnChange == BTStops.BOTH || StopsOnChange == BTStops.IMMEDIATE_RESTART)
             {
                 // Debug.Log( this.key + " stopped self ");
                 this.End();
@@ -74,7 +74,7 @@ public abstract class BTObservingDecorator : BTDecorator
         }
         else if (!IsActive && IsConditionMet())
         {
-            if (m_StopsOnChange == BTStops.LOWER_PRIORITY || m_StopsOnChange == BTStops.BOTH || m_StopsOnChange == BTStops.IMMEDIATE_RESTART || m_StopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART)
+            if (StopsOnChange == BTStops.LOWER_PRIORITY || StopsOnChange == BTStops.BOTH || StopsOnChange == BTStops.IMMEDIATE_RESTART || StopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART)
             {
                 // Debug.Log( this.key + " stopped other ");
                 BTContainer parentNode = this.Parent;
@@ -88,10 +88,10 @@ public abstract class BTObservingDecorator : BTDecorator
                 Assert.IsNotNull(childNode);
                 if (parentNode is BTParallel)
                 {
-                    Assert.IsTrue(m_StopsOnChange == BTStops.IMMEDIATE_RESTART, "On Parallel Nodes all children have the same priority, thus BTStops.LOWER_PRIORITY or BTStops.BOTH are unsupported in this context!");
+                    Assert.IsTrue(StopsOnChange == BTStops.IMMEDIATE_RESTART, "On Parallel Nodes all children have the same priority, thus BTStops.LOWER_PRIORITY or BTStops.BOTH are unsupported in this context!");
                 }
 
-                if (m_StopsOnChange == BTStops.IMMEDIATE_RESTART || m_StopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART)
+                if (StopsOnChange == BTStops.IMMEDIATE_RESTART || StopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART)
                 {
                     if (m_IsObserving)
                     {
@@ -100,7 +100,7 @@ public abstract class BTObservingDecorator : BTDecorator
                     }
                 }
 
-                ((BTComposite)parentNode).StopLowerPriorityChildrenForChild(childNode, m_StopsOnChange == BTStops.IMMEDIATE_RESTART || m_StopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART);
+                ((BTComposite)parentNode).StopLowerPriorityChildrenForChild(childNode, StopsOnChange == BTStops.IMMEDIATE_RESTART || StopsOnChange == BTStops.LOWER_PRIORITY_IMMEDIATE_RESTART);
             }
         }
     }

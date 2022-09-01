@@ -304,12 +304,12 @@ public class BTTimeMenter :ILifeCycle
 
     public void Destroy()
     {
-        m_UpdateObserverList.Clear();
-        m_TimerDict.Clear();
-        m_RemoveObserverSet.Clear();
-        m_AddObserverSet.Clear();
-        m_AddTimerDict.Clear();
-        m_TimerPoolList.Clear();
+        m_UpdateObserverList?.Clear();
+        m_TimerDict?.Clear();
+        m_RemoveObserverSet?.Clear();
+        m_AddObserverSet?.Clear();
+        m_AddTimerDict?.Clear();
+        m_TimerPoolList?.Clear();
         
         m_UpdateObserverList = null;
         m_TimerDict = null;

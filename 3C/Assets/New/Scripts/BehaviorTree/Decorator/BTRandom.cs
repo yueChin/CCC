@@ -2,7 +2,7 @@
 {
     private float m_Probability;
 
-    public BTRandom(float probability, BTNode decoratee) : base("Random", decoratee)
+    public BTRandom(float probability, BTNode childNode) : base("Random", childNode)
     {
         this.m_Probability = probability;
     }

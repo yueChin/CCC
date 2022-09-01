@@ -14,10 +14,11 @@ public class BuffSystem
     private HashSet<Buff> m_DisableBuffList;
     private bool m_IsChange = false;
 
+    public Type SystemType { get; private set; }
     public BTTimeMenter BtTimeMenter { get; protected set; }
     public BuffSystem()
     {
-        
+        SystemType = GetType();
     }
     
     public BuffSystem(int priority = 0)

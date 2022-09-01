@@ -5,7 +5,7 @@ public class BTObserver : BTDecorator
     private System.Action m_OnStart;
     private System.Action<bool> m_OnStop;
 
-    public BTObserver(System.Action onStart, System.Action<bool> onStop, BTNode decoratee) : base("Observer", decoratee)
+    public BTObserver(System.Action onStart, System.Action<bool> onStop, BTNode childNode) : base("Observer", childNode)
     {
         this.m_OnStart = onStart;
         this.m_OnStop = onStop;

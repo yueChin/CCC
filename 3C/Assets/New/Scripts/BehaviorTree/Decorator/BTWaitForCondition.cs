@@ -7,7 +7,7 @@ public class BTWaitForCondition : BTDecorator
     private float m_CheckInterval;
     private float m_CheckVariance;
 
-    public BTWaitForCondition(Func<bool> condition, float checkInterval, float randomVariance, BTNode decoratee) : base("WaitForCondition", decoratee)
+    public BTWaitForCondition(Func<bool> condition, float checkInterval, float randomVariance, BTNode childNode) : base("WaitForCondition", childNode)
     {
         this.m_Condition = condition;
 

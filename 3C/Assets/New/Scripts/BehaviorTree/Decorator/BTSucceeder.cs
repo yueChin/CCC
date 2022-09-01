@@ -1,6 +1,6 @@
 ﻿public class BTSucceeder : BTDecorator
 {
-    public BTSucceeder(BTNode decoratee) : base("Succeeder", decoratee)
+    public BTSucceeder(BTNode childNode) : base("Succeeder", childNode)
     {
     }
 
