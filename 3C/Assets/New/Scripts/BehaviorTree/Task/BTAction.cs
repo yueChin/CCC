@@ -44,12 +44,12 @@ public class BTAction : BTTask
         this.m_SingleFrameFunc = singleFrameFunc;
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         if (this.m_Action != null)
         {
             this.m_Action.Invoke();
-            this.Stopped(true);
+            this.Ended(true);
         }
         else if (this.m_MultiFrameFunc != null)
         {
@@ -65,7 +65,7 @@ public class BTAction : BTTask
             }
             else
             {
-                this.Stopped(result == Result.SUCCESS);
+                this.Ended(result == Result.SUCCESS);
             }
         }
         else if (this.m_MultiFrameFunc2 != null)
@@ -82,12 +82,12 @@ public class BTAction : BTTask
             }
             else
             {
-                this.Stopped(result == Result.SUCCESS);
+                this.Ended(result == Result.SUCCESS);
             }
         }
         else if (this.m_SingleFrameFunc != null)
         {
-            this.Stopped(this.m_SingleFrameFunc.Invoke());
+            this.Ended(this.m_SingleFrameFunc.Invoke());
         }
     }
 
@@ -97,7 +97,7 @@ public class BTAction : BTTask
         if (result != Result.PROGRESS && result != Result.BLOCKED)
         {
             this.RootNode.TimeMenter.RemoveUpdateObserver(OnUpdateFunc);
-            this.Stopped(result == Result.SUCCESS);
+            this.Ended(result == Result.SUCCESS);
         }
     }
 
@@ -116,25 +116,25 @@ public class BTAction : BTTask
         else
         {
             this.RootNode.TimeMenter.RemoveUpdateObserver(OnUpdateFunc2);
-            this.Stopped(result == Result.SUCCESS);
+            this.Ended(result == Result.SUCCESS);
         }
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
         if (this.m_MultiFrameFunc != null)
         {
             Result result = this.m_MultiFrameFunc.Invoke(true);
             Assert.AreNotEqual(result, Result.PROGRESS, "The Task has to return Result.SUCCESS, Result.FAILED/BLOCKED after beeing cancelled!");
             this.RootNode.TimeMenter.RemoveUpdateObserver(OnUpdateFunc);
-            this.Stopped(result == Result.SUCCESS);
+            this.Ended(result == Result.SUCCESS);
         }
         else if (this.m_MultiFrameFunc2 != null)
         {
             Result result = this.m_MultiFrameFunc2.Invoke(Request.CANCEL);
             Assert.AreNotEqual(result, Result.PROGRESS, "The Task has to return Result.SUCCESS or Result.FAILED/BLOCKED after beeing cancelled!");
             this.RootNode.TimeMenter.RemoveUpdateObserver(OnUpdateFunc2);
-            this.Stopped(result == Result.SUCCESS);
+            this.Ended(result == Result.SUCCESS);
         }
         else
         {

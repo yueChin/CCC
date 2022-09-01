@@ -25,7 +25,7 @@ public class BTWaitForCondition : BTDecorator
         this.Name = "every tick";
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         if (!m_Condition.Invoke())
         {
@@ -46,22 +46,22 @@ public class BTWaitForCondition : BTDecorator
         }
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
         BTTimeMenter.RemoveTimer(CheckCondition);
         if (ChildNode.IsActive)
         {
-            ChildNode.Stop();
+            ChildNode.End();
         }
         else
         {
-            Stopped(false);
+            Ended(false);
         }
     }
 
     protected override void DoChildStopped(BTNode child, bool result)
     {
         Assert.AreNotEqual(this.CurrentState, State.INACTIVE);
-        Stopped(result);
+        Ended(result);
     }
 }

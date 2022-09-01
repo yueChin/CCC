@@ -39,7 +39,7 @@ using System.Collections.Generic;
             this.m_ChildrenResultDict = new Dictionary<BTNode, bool>();
         }
 
-        protected override void DoStart()
+        protected override void OnEnable()
         {
             foreach (BTNode child in Children)
             {
@@ -57,7 +57,7 @@ using System.Collections.Generic;
             }
         }
 
-        protected override void DoStop()
+        protected override void OnDisable()
         {
             Assert.IsTrue(m_RunningCount + m_SucceededCount + m_FailedCount == m_ChildrenCount);
 
@@ -65,7 +65,7 @@ using System.Collections.Generic;
             {
                 if (child.IsActive)
                 {
-                    child.Stop();
+                    child.End();
                 }
             }
         }
@@ -107,7 +107,7 @@ using System.Collections.Generic;
                             m_IsSuccessState = false;
                         }
                     }
-                    Stopped(m_IsSuccessState);
+                    Ended(m_IsSuccessState);
                 }
                 else if (!this.m_IsChildrenAborted)
                 {
@@ -131,7 +131,7 @@ using System.Collections.Generic;
                         {
                             if (currentChild.IsActive)
                             {
-                                currentChild.Stop();
+                                currentChild.End();
                             }
                         }
                     }

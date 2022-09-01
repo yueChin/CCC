@@ -7,7 +7,7 @@
         this.m_Probability = probability;
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         if (UnityEngine.Random.value <= this.m_Probability)
         {
@@ -15,17 +15,17 @@
         }
         else
         {
-            Stopped(false);
+            Ended(false);
         }
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
-        ChildNode.Stop();
+        ChildNode.End();
     }
 
     protected override void DoChildStopped(BTNode child, bool result)
     {
-        Stopped(result);
+        Ended(result);
     }
 }

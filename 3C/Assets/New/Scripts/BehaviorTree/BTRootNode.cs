@@ -28,9 +28,9 @@ public class BTRootNode : BTDecorator , ILifeCycle
         TimeMenter = null;
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
-        base.DoStart();
+        base.OnEnable();
         BTEntryNode.Start();
         BlckBoard.Enable();
     }
@@ -44,7 +44,7 @@ public class BTRootNode : BTDecorator , ILifeCycle
         else
         {
             this.BlckBoard.Disable();
-            Stopped(succeeded);
+            Ended(succeeded);
         }
     }
 }

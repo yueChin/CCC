@@ -17,7 +17,7 @@
 
     public virtual void Destroy()
     {
-        RootNode.Stop();
+        RootNode.End();
         RootNode.Destroy();
         RootNode = null;
     }

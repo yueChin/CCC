@@ -11,20 +11,20 @@ public class BTObserver : BTDecorator
         this.m_OnStop = onStop;
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         this.m_OnStart();
         ChildNode.Start();
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
-        ChildNode.Stop();
+        ChildNode.End();
     }
 
     protected override void DoChildStopped(BTNode child, bool result)
     {
         this.m_OnStop(result);
-        Stopped(result);
+        Ended(result);
     }
 }

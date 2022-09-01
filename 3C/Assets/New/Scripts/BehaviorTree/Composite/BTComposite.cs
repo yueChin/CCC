@@ -25,13 +25,13 @@ public abstract class BTComposite : BTContainer
         }
     }
 
-    protected override void Stopped(bool success)
+    protected override void Ended(bool success)
     {
         foreach (BTNode child in Children)
         {
             child.ParentCompositeStopped(this);
         }
-        base.Stopped(success);
+        base.Ended(success);
     }
 
     public abstract void StopLowerPriorityChildrenForChild(BTNode child, bool immediateRestart);

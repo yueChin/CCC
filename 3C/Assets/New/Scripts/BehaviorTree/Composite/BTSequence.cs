@@ -8,7 +8,7 @@ public class BTSequence : BTComposite
     {
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         foreach (BTNode child in Children)
         {
@@ -20,9 +20,9 @@ public class BTSequence : BTComposite
         ProcessChildren();
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
-        Children[currentIndex].Stop();
+        Children[currentIndex].End();
     }
 
 
@@ -34,7 +34,7 @@ public class BTSequence : BTComposite
         }
         else
         {
-            Stopped(false);
+            Ended(false);
         }
     }
 
@@ -44,7 +44,7 @@ public class BTSequence : BTComposite
         {
             if (IsStopRequested)
             {
-                Stopped(false);
+                Ended(false);
             }
             else
             {
@@ -53,7 +53,7 @@ public class BTSequence : BTComposite
         }
         else
         {
-            Stopped(true);
+            Ended(true);
         }
     }
 
@@ -81,7 +81,7 @@ public class BTSequence : BTComposite
                 {
                     currentIndex = Children.Length;
                 }
-                currentChild.Stop();
+                currentChild.End();
                 break;
             }
         }

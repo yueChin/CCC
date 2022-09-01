@@ -17,7 +17,7 @@ public class RandomSequence : BTComposite
         }
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         foreach (BTNode child in Children)
         {
@@ -37,9 +37,9 @@ public class RandomSequence : BTComposite
         ProcessChildren();
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
-        Children[m_RandomizedOrder[currentIndex]].Stop();
+        Children[m_RandomizedOrder[currentIndex]].End();
     }
 
 
@@ -51,7 +51,7 @@ public class RandomSequence : BTComposite
         }
         else
         {
-            Stopped(false);
+            Ended(false);
         }
     }
 
@@ -61,7 +61,7 @@ public class RandomSequence : BTComposite
         {
             if (IsStopRequested)
             {
-                Stopped(false);
+                Ended(false);
             }
             else
             {
@@ -70,7 +70,7 @@ public class RandomSequence : BTComposite
         }
         else
         {
-            Stopped(true);
+            Ended(true);
         }
     }
 
@@ -98,7 +98,7 @@ public class RandomSequence : BTComposite
                 {
                     currentIndex = Children.Length;
                 }
-                currentChild.Stop();
+                currentChild.End();
                 break;
             }
         }

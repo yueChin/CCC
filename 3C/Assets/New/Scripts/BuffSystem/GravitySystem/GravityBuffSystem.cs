@@ -2,7 +2,7 @@
 {
     public GravityBuffSystem()
     {
-        BtTimeMenter = new BTTimeMenter();
+        BtTimeMenter = GameLoop.Instace.GetFixedGameMoudle<BuffSystemManager>().BtContent.BtTimeMenter; 
     }
 
     ~GravityBuffSystem()

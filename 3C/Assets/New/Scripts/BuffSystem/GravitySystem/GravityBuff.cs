@@ -26,7 +26,7 @@ public class GravityBuff :Buff<CMBody>
     public override void OnDisable()
     {
         base.OnDisable();
-        RootNode.Stop();
+        RootNode.End();
     }
 
     public void DoGravity()

@@ -52,27 +52,27 @@ public abstract class BTNode : ILifeCycle
     {
         Assert.AreEqual(this.m_CurrentState, State.INACTIVE, "can only start inactive nodes");
         this.m_CurrentState = State.ACTIVE;
-        DoStart();
+        OnEnable();
     }
 
-    public void Stop()
+    public void End()
     {
         Assert.AreEqual(this.m_CurrentState, State.ACTIVE, "can only stop active nodes, tried to stop");
         this.m_CurrentState = State.STOP_REQUESTED;
-        DoStop();
+        OnDisable();
     }
 
-    protected virtual void DoStart()
+    protected virtual void OnEnable()
     {
 
     }
 
-    protected virtual void DoStop()
+    protected virtual void OnDisable()
     {
 
     }
 
-    protected virtual void Stopped(bool success)
+    protected virtual void Ended(bool success)
     {
         Assert.AreNotEqual(this.m_CurrentState, State.INACTIVE, "Called 'Stopped' while in state INACTIVE, something is wrong!");
         this.m_CurrentState = State.INACTIVE;

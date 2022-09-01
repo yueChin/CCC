@@ -33,7 +33,7 @@ public class BTTimeMin : BTDecorator
         Assert.IsTrue(m_Limit > 0f, "m_Limit has to be set");
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         m_IsDecorateeDone = false;
         m_IsDecorateeSuccess = false;
@@ -42,18 +42,18 @@ public class BTTimeMin : BTDecorator
         ChildNode.Start();
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
         if (ChildNode.IsActive)
         {
             BTTimeMenter.RemoveTimer(TimeoutReached);
             m_IsLimitReached = true;
-            ChildNode.Stop();
+            ChildNode.End();
         }
         else
         {
             BTTimeMenter.RemoveTimer(TimeoutReached);
-            Stopped(false);
+            Ended(false);
         }
     }
 
@@ -64,7 +64,7 @@ public class BTTimeMin : BTDecorator
         if (m_IsLimitReached || (!result && !m_WaitOnFailure))
         {
             BTTimeMenter.RemoveTimer(TimeoutReached);
-            Stopped(m_IsDecorateeSuccess);
+            Ended(m_IsDecorateeSuccess);
         }
         else
         {
@@ -77,7 +77,7 @@ public class BTTimeMin : BTDecorator
         m_IsLimitReached = true;
         if (m_IsDecorateeDone)
         {
-            Stopped(m_IsDecorateeSuccess);
+            Ended(m_IsDecorateeSuccess);
         }
         else
         {

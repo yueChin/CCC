@@ -82,7 +82,7 @@ public class BTCooldown : BTDecorator
         Assert.IsTrue(cooldownTime > 0f, "cooldownTime has to be set");
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         if (m_IsReady)
         {
@@ -97,24 +97,24 @@ public class BTCooldown : BTDecorator
         {
             if (m_FailOnCooldown)
             {
-                Stopped(false);
+                Ended(false);
             }
         }
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
         if (ChildNode.IsActive)
         {
             m_IsReady = true;
             BTTimeMenter.RemoveTimer(TimeoutReached);
-            ChildNode.Stop();
+            ChildNode.End();
         }
         else
         {
             m_IsReady = true;
             BTTimeMenter.RemoveTimer(TimeoutReached);
-            Stopped(false);
+            Ended(false);
         }
     }
 
@@ -129,7 +129,7 @@ public class BTCooldown : BTDecorator
         {
             BTTimeMenter.AddTimer(m_CooldownTime, m_RandomVariation, 0, TimeoutReached);
         }
-        Stopped(result);
+        Ended(result);
     }
 
     private void TimeoutReached()

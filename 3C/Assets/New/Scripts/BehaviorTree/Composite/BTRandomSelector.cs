@@ -18,7 +18,7 @@ public class BTRandomSelector : BTComposite
     }
 
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         foreach (BTNode child in Children)
         {
@@ -40,16 +40,16 @@ public class BTRandomSelector : BTComposite
 
 
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
-        Children[m_RandomizedOrder[m_CurrentIndex]].Stop();
+        Children[m_RandomizedOrder[m_CurrentIndex]].End();
     }
 
     protected override void DoChildStopped(BTNode child, bool result)
     {
         if (result)
         {
-            Stopped(true);
+            Ended(true);
         }
         else
         {
@@ -63,7 +63,7 @@ public class BTRandomSelector : BTComposite
         {
             if (IsStopRequested)
             {
-                Stopped(false);
+                Ended(false);
             }
             else
             {
@@ -72,7 +72,7 @@ public class BTRandomSelector : BTComposite
         }
         else
         {
-            Stopped(false);
+            Ended(false);
         }
     }
 
@@ -100,7 +100,7 @@ public class BTRandomSelector : BTComposite
                 {
                     m_CurrentIndex = Children.Length;
                 }
-                currentChild.Stop();
+                currentChild.End();
                 break;
             }
         }

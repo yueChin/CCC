@@ -13,7 +13,7 @@ public abstract class BTObservingDecorator : BTDecorator
         this.m_IsObserving = false;
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         if (m_StopsOnChange != BTStops.NONE)
         {
@@ -26,7 +26,7 @@ public abstract class BTObservingDecorator : BTDecorator
 
         if (!IsConditionMet())
         {
-            Stopped(false);
+            Ended(false);
         }
         else
         {
@@ -34,9 +34,9 @@ public abstract class BTObservingDecorator : BTDecorator
         }
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
-        ChildNode.Stop();
+        ChildNode.End();
     }
 
     protected override void DoChildStopped(BTNode child, bool result)
@@ -50,7 +50,7 @@ public abstract class BTObservingDecorator : BTDecorator
                 StopObserving();
             }
         }
-        Stopped(result);
+        Ended(result);
     }
 
     protected override void DoParentCompositeStopped(BTComposite parentComposite)
@@ -69,7 +69,7 @@ public abstract class BTObservingDecorator : BTDecorator
             if (m_StopsOnChange == BTStops.SELF || m_StopsOnChange == BTStops.BOTH || m_StopsOnChange == BTStops.IMMEDIATE_RESTART)
             {
                 // Debug.Log( this.key + " stopped self ");
-                this.Stop();
+                this.End();
             }
         }
         else if (!IsActive && IsConditionMet())

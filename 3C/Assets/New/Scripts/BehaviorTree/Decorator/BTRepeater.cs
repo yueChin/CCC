@@ -15,7 +15,7 @@
     {
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         if (m_LoopCount != 0)
         {
@@ -24,21 +24,21 @@
         }
         else
         {
-            this.Stopped(true);
+            this.Ended(true);
         }
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
         this.BTTimeMenter.RemoveTimer(RestartDecoratee);
 
         if (ChildNode.IsActive)
         {
-            ChildNode.Stop();
+            ChildNode.End();
         }
         else
         {
-            Stopped(false);
+            Ended(false);
         }
     }
 
@@ -48,7 +48,7 @@
         {
             if (IsStopRequested || (m_LoopCount > 0 && ++m_CurrentLoop >= m_LoopCount))
             {
-                Stopped(true);
+                Ended(true);
             }
             else
             {
@@ -57,7 +57,7 @@
         }
         else
         {
-            Stopped(false);
+            Ended(false);
         }
     }
 

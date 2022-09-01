@@ -28,7 +28,7 @@
         this.Name = "every tick";
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         if (this.m_Interval <= 0f)
         {
@@ -47,9 +47,9 @@
         ChildNode.Start();
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
-        ChildNode.Stop();
+        ChildNode.End();
     }
 
     protected override void DoChildStopped(BTNode child, bool result)
@@ -66,7 +66,7 @@
         {
             this.BTTimeMenter.RemoveTimer(InvokeServiceMethodWithRandomVariation);
         }
-        Stopped(result);
+        Ended(result);
     }
 
     private void InvokeServiceMethodWithRandomVariation()

@@ -42,7 +42,7 @@
         this.m_RandomVariance = randomVariance;
     }
 
-    protected override void DoStart()
+    protected override void OnEnable()
     {
         float seconds = this.m_Seconds;
         if (seconds < 0)
@@ -71,15 +71,15 @@
         }
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
         BTTimeMenter.RemoveTimer(OnTimer);
-        this.Stopped(false);
+        this.Ended(false);
     }
 
     private void OnTimer()
     {
         BTTimeMenter.RemoveTimer(OnTimer);
-        this.Stopped(true);
+        this.Ended(true);
     }
 }

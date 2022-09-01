@@ -6,8 +6,8 @@
         this.m_SucessWhenStopped = sucessWhenStopped;
     }
 
-    protected override void DoStop()
+    protected override void OnDisable()
     {
-        this.Stopped(m_SucessWhenStopped);
+        this.Ended(m_SucessWhenStopped);
     }
 }
