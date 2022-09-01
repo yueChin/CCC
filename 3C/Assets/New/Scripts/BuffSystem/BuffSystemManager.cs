@@ -74,7 +74,7 @@ public class BuffSystemManager : IGameMoudle
         }
     }
 
-    public BuffSystem FetchSystem<T>() where T : BuffSystem,new()
+    public T FetchSystem<T>() where T : BuffSystem,new()
     {
         T t = new T();
         t.Awake();

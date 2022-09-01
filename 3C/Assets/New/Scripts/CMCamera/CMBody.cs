@@ -99,7 +99,7 @@ public class CMBody : MonoBehaviour,IWorldBody
         BodyFSM = fsm;
 
         BuffSystemManager buffSystemManager = GameLoop.Instace.GetGameMoudle<BuffSystemManager>();
-        BuffSystem buffSystem = buffSystemManager.FetchSystem<BuffSystem>();
+        GravityBuffSystem buffSystem = buffSystemManager.FetchSystem<GravityBuffSystem>();
         buffSystem.SetPriority(0);
         GravityBuff gravityBuff = new GravityBuff(1);
         gravityBuff.SetT(this);
