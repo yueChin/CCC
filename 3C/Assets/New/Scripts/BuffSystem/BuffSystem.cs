@@ -168,6 +168,18 @@ public class BuffSystem
         m_IsChange = true;
     }
 
+    public void RemoveBuff(int buffId)
+    {
+        foreach (KeyValuePair<int, Buff> keyValuePair in AllBuffDict)
+        {
+            if (keyValuePair.Key == buffId)
+            {
+                RemoveBuff(keyValuePair.Value);
+                return;
+            }
+        }
+    }
+    
     public void RemoveBuff(Buff buff)
     {
         if (!m_RemoveBuffSet.Contains(buff) && m_RunBuffList.Contains(buff))

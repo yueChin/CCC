@@ -95,7 +95,7 @@ public class BuffSystemManager : IGameMoudle
         }
         T t = new T();
         t.Awake();
-        //AddBuffSystem(t);
+        AddBuffSystem(t);
         return t;
     }
     

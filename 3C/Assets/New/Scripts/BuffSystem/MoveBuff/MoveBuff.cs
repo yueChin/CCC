@@ -4,7 +4,7 @@ public class MoveBuff :Buff<CMBody>
 {
     private CMEaseMove m_MoveEase;
     
-    public MoveBuff(int id, BuffSystem buffSystem) : base(id, buffSystem)
+    public MoveBuff(int id, BuffSystem buffSystem,MonoEntity entity) : base(id, buffSystem,entity)
     {
         m_MoveEase = new CMEaseMove();
     }
@@ -17,14 +17,10 @@ public class MoveBuff :Buff<CMBody>
     public override void OnEnable()
     {
         base.OnEnable();
-        BTNode stop = new BTAction(Stop);
-        BTNode condition = new BtObservingBlackboardCondition("kk", BTOperator.IS_NOT_EQUAL,BTStops.BOTH,stop);
-        BTAction move = new BTAction(DoMove);
-        BTRepeater repeater = new BTRepeater(-1,move);
-        BTParallel parallel = new BTParallel(BTParallel.Policy.ALL,BTParallel.Policy.ALL, repeater,condition);
+        
+        m_MoveEase.Enter(0.7f, 0.05f, Vector3.up);
         BTWaitUntilStopped stopped = new BTWaitUntilStopped();
         BTService service = new BTService(DoMove,stopped);
-        
         BlackBoard bb = new BlackBoard(BuffSystem.BtTimeMenter);
         RootNode = new BTRootNode(bb,service);
         RootNode.Start();
@@ -33,18 +29,8 @@ public class MoveBuff :Buff<CMBody>
     public override void End()
     {
         base.End();
-        BuffSystem.RemoveBuff(this);
     }
 
-    private bool IsFinish()
-    {
-        return !m_MoveEase.IsRunning;
-    }
-
-    private void Stop()
-    {
-        this.End();
-    }
     
     private void DoMove()
     {

@@ -13,11 +13,7 @@ public class CMEaseMove : Gear
     {
         get
         {
-            if (this.m_Ease.IsRunning)
-            {
-                return this.GetForward(1);
-            }
-            return Vector3.zero;
+            return this.GetForward(1);
         }
     }
     

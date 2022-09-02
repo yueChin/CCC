@@ -35,6 +35,13 @@ public class BTRootNode : BTDecorator , ILifeCycle
         BlckBoard.Enable();
     }
 
+    protected override void OnDisable()
+    {
+        BTEntryNode.End();
+        BlckBoard.Disable();
+        base.OnDisable();
+    }
+
     protected override void DoChildStopped(BTNode child, bool succeeded)
     {
         if (!IsStopRequested)

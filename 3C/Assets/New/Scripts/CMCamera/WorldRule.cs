@@ -3,15 +3,28 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WorldRule : MonoBehaviour
+public class WorldRule : IGameMoudle
 {
     public Dictionary<IWorldBody, CMEaseMove> GravityDict = new Dictionary<IWorldBody, CMEaseMove>();
     public List<KeyValuePair<IWorldBody,CMEaseMove>> GravityList = new List<KeyValuePair<IWorldBody,CMEaseMove>>();
-    protected CustomEaseMove m_GravityMove;
     
-    public float Gravity
+    public void Awake()
     {
-        get { return this.m_GravityMove.Power; }
+        GravityDict = new Dictionary<IWorldBody, CMEaseMove>();
+        GravityList = new List<KeyValuePair<IWorldBody,CMEaseMove>>();
+    }
+
+    public void Destroy()
+    {
+        GravityDict.Clear();
+        GravityList.Clear();
+        GravityDict = null;
+        GravityList = null;
+    }
+
+    public void Tick(float delta)
+    {
+        FixedUpdate();
     }
     
     public void SetActiveBody(IWorldBody body)
@@ -34,6 +47,28 @@ public class WorldRule : MonoBehaviour
         }
     }
 
+    public void AddGravityBuff(CMBody body)
+    {
+        if (!body.HasBuff(1))
+        {
+            Debug.LogError("增加重力");
+            GravityMoveBuffSystem buffSystem = GameLoop.Instace.GetGameMoudle<BuffSystemManager>().FetchSystem<GravityMoveBuffSystem>();
+            GravityMoveBuff gravityBuff = new GravityMoveBuff(1,buffSystem,body);
+            gravityBuff.SetT(body);
+            buffSystem.AddBuff(gravityBuff);
+        }
+    }
+
+    public void RemoveGravityBuff(CMBody body)
+    {
+        if (body.HasBuff(1))
+        {
+            Debug.LogError("移除重力");
+            GravityMoveBuffSystem buffSystem = GameLoop.Instace.GetGameMoudle<BuffSystemManager>().FetchSystem<GravityMoveBuffSystem>();
+            buffSystem.RemoveBuff(1);
+        }
+    }
+    
     public void NegtiveBody(IWorldBody body)
     {
         if (GravityDict.TryGetValue(body, out CMEaseMove value))
@@ -43,7 +78,7 @@ public class WorldRule : MonoBehaviour
                 value.Exit();
                 value.Power = 0;
             }
-            GravityList.Remove(new KeyValuePair<IWorldBody, CMEaseMove>(body,value));
+            GravityList.Clear();
         }
     }
 

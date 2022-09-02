@@ -23,6 +23,7 @@ public class GameLoop : MonoBehaviour
             new FSMManager(),
             new BTContent(),
             new BuffSystemManager(),
+            new WorldRule()
         };
         
         foreach (IGameMoudle gameMoudle in MoudleList)
