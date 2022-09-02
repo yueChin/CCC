@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 using Cinemachine.Utility;
 using UnityEngine;
 
-public class CMBody : MonoBehaviour,IWorldBody
+public class CMBody : MonoEntity,IWorldBody
 {
     public const float MIN_RANGE = 0.01f;
 
@@ -39,7 +40,7 @@ public class CMBody : MonoBehaviour,IWorldBody
     private Vector3 m_Velocity;
 
     private WorldRule m_WorldRule;
-
+    
     public bool IsGrounded { get; protected set; }
 
     public float GroundY
@@ -71,20 +72,12 @@ public class CMBody : MonoBehaviour,IWorldBody
 
     public FSM<CMBody> BodyFSM { get; private set; }
     
-    protected virtual void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         this.m_Collider = this.GetComponent<BoxCollider>();
         this.m_Transform = this.gameObject.transform;
         this.Normal = Vector3.up;
-        if (m_WorldRule == null)
-        {
-            m_WorldRule = FindObjectOfType<WorldRule>();
-        }
-
-        if (m_WorldRule != null)
-        {
-            m_WorldRule.SetActiveBody(this);
-        }
     }
 
     protected virtual void Start()
@@ -98,13 +91,8 @@ public class CMBody : MonoBehaviour,IWorldBody
         fsm.Init();
         BodyFSM = fsm;
 
-        BuffSystemManager buffSystemManager = GameLoop.Instace.GetGameMoudle<BuffSystemManager>();
-        GravityBuffSystem buffSystem = buffSystemManager.FetchSystem<GravityBuffSystem>();
-        buffSystem.SetPriority(0);
-        GravityBuff gravityBuff = new GravityBuff(1,buffSystem);
-        gravityBuff.SetT(this);
-        buffSystem.AddBuff(gravityBuff);
-        buffSystemManager.AddBuffSystem(buffSystem);
+        m_WorldRule = GameLoop.Instace.GetFixedGameMoudle<WorldRule>();
+        m_WorldRule.SetActiveBody(this);
         
         this.LegalPosition = this.m_Transform.position;
         this.AdjustPosition();
@@ -113,7 +101,7 @@ public class CMBody : MonoBehaviour,IWorldBody
 
     protected virtual void FixedUpdate()
     {
-        //GravtyUpdate();
+        GravtyUpdate();
         PhysicVelocity();
         PhysicPostion();
     }
@@ -156,7 +144,6 @@ public class CMBody : MonoBehaviour,IWorldBody
         {
             velocity = this.m_PhysicVelocity;
         }
-
         //Debug.LogError($"velocity        {velocity}");
         Vector3 position = this.m_Transform.position;
         Vector3 offset = this.m_Collider.center + Vector3.up * this.stepOffset;
@@ -239,8 +226,8 @@ public class CMBody : MonoBehaviour,IWorldBody
 
         float lerp = Easing.Linear((Time.time - m_LastPositionFixedTime) / (Time.fixedDeltaTime));
         Vector3 pos = Vector3.Lerp(this.m_LatePosition, m_TargetPhysicPostion, lerp);
+        this.m_PhysicVelocity -= pos - m_Transform.position ;
         this.m_Transform.position = pos;
-        this.m_PhysicVelocity = Vector3.zero;
     }
 
     public virtual void SetLegalPosition(Vector3 position, bool adjust = false)
@@ -315,11 +302,11 @@ public class CMBody : MonoBehaviour,IWorldBody
 
     private void GravtyUpdate()
     {
-        if (!this.IsGrounded )
+        if (!this.IsGrounded)
         {
             m_WorldRule.ActiveBody(this);
         }
-        else if (this.IsGrounded)
+        else 
         {
             m_WorldRule.NegtiveBody(this);
         }
