@@ -2,13 +2,14 @@
 using NPBehave;
 using UnityEngine;
 
-public class GravityBuff :Buff<CMBody>
+public class GravityMoveBuff :Buff<CMBody>
 {
     private Type m_GroudType;
     private Type m_SkyType;
     private CMEaseMove m_GrivityEase;
-    public GravityBuff(int id,BuffSystem buffSystem) : base(id,buffSystem)
+    public GravityMoveBuff(int id,BuffSystem buffSystem,MonoEntity entity) : base(id,buffSystem,entity)
     {
+        id = 1;
         m_GroudType = typeof(GroundState);
         m_SkyType = typeof(SkyState);
         m_GrivityEase = new CMEaseMove();
@@ -23,11 +24,12 @@ public class GravityBuff :Buff<CMBody>
         // BTNode rept2 = new BTRepeater(-1, skyAction);
         // BTObservingCondition bc1 = new BTObservingCondition(IsGround,BTStops.BOTH,rept1);
         // BTObservingCondition bc2 = new BTObservingCondition(IsSky,BTStops.BOTH,rept2);
+        m_GrivityEase.Enter(0, -0.035f, Vector3.down);
         
+        BTWaitUntilStopped stopped = new BTWaitUntilStopped();
+        BTService service = new BTService(DoGravity, stopped);
         BlackBoard bb = new BlackBoard(BuffSystem.BtTimeMenter);
-        BTNode gravity = new BTAction(DoGravity);
-        BTNode rept = new BTRepeater(-1, gravity);
-        RootNode = new BTRootNode(bb,rept);
+        RootNode = new BTRootNode(bb,service);
         RootNode.Start();
     }
 
@@ -36,26 +38,6 @@ public class GravityBuff :Buff<CMBody>
         base.OnDisable();
     }
 
-    private bool IsGround()
-    {
-        return BuffData1.BodyFSM.CurtState.Type() == m_GroudType;
-    }
-
-    private bool IsSky()
-    {
-        return BuffData1.BodyFSM.CurtState.Type() == m_SkyType;
-    }
-    
-    public void DoSky()
-    {
-        
-    }
-
-    private void DoGround()
-    {
-        
-    }
-    
     public void DoGravity()
     {
         if(BuffData1.BodyFSM.CurtState.Type() == m_SkyType)
@@ -65,23 +47,15 @@ public class GravityBuff :Buff<CMBody>
                 m_GrivityEase.FixedUpdate();
                 BuffData1.Move(m_GrivityEase.EaseVelocity);
             }
-            else
-            {
-                m_GrivityEase.Enter(0, -0.035f, Vector3.down);
-            }
         }
-        else if (BuffData1.BodyFSM.CurtState.Type() == m_GroudType)
-        {
-            if (m_GrivityEase.IsRunning)
-            {
-                m_GrivityEase.Exit();
-                m_GrivityEase.Power = 0;
-            }
-        }
-    }
-
-    public override void Tick(float timeDelta)
-    {
-        base.Tick(timeDelta);
+        // else if (BuffData1.BodyFSM.CurtState.Type() == m_GroudType)
+        // {
+        //     if (m_GrivityEase.IsRunning)
+        //     {
+        //         m_GrivityEase.Exit();
+        //         m_GrivityEase.Power = 0;
+        //     }
+        //     this.End();
+        // }
     }
 }

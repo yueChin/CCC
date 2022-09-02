@@ -1,11 +1,11 @@
-﻿public class GravityBuffSystem : BuffSystem
+﻿public class GravityMoveBuffSystem : BuffSystem
 {
-    public GravityBuffSystem()
+    public GravityMoveBuffSystem()
     {
         BtTimeMenter = GameLoop.Instace.GetFixedGameMoudle<BuffSystemManager>().BtContent.BtTimeMenter; 
     }
 
-    ~GravityBuffSystem()
+    ~GravityMoveBuffSystem()
     {
         BtTimeMenter = null;
     }
