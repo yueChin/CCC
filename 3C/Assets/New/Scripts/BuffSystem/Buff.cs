@@ -1,4 +1,6 @@
-﻿public class Buff : ILifeCycle,ILifeCycleable
+﻿using UnityEngine;
+
+public class Buff : ILifeCycle,ILifeCycleable
 {
     public int BuffId;
     public int Priority;
@@ -30,6 +32,8 @@
         RootNode = null;
         MonoEntity.RemoveBuff(this.BuffId);
         MonoEntity = null;
+        // if(BuffId == 1)
+        //     Debug.LogError("移除重力");
     }
 
     public virtual void Tick(float timeDelta)
@@ -54,7 +58,7 @@
 
     public virtual void End()
     {
-        BuffSystem.RemoveBuff(this);
+        BuffSystem.RemoveBuff(this.BuffId);
     }
 }
 

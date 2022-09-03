@@ -130,9 +130,8 @@ public class CMBody : MonoEntity,IWorldBody
         {
             return;
         }
-
-        //Debug.LogError("```````````````````````````````````````````````````````````");
-        //Debug.LogError(this.velocity.y + "    this    normal   " + this.normal);
+        
+        //Debug.LogError("本帧结算时m_PhysicVelocity 向量" + m_PhysicVelocity);
         bool isApp = Mathf.Approximately(this.m_PhysicVelocity.y, 0);
         Vector3 velocity;
 
@@ -144,7 +143,7 @@ public class CMBody : MonoEntity,IWorldBody
         {
             velocity = this.m_PhysicVelocity;
         }
-        //Debug.LogError($"velocity        {velocity}");
+        //Debug.LogError($"结算吼的向量        {velocity}");
         Vector3 position = this.m_Transform.position;
         Vector3 offset = this.m_Collider.center + Vector3.up * this.stepOffset;
         Vector3 size = this.m_Collider.size * 0.5f;
@@ -215,6 +214,8 @@ public class CMBody : MonoEntity,IWorldBody
         this.m_LastPositionFixedTime = Time.time;
         this.m_TargetPhysicPostion = position;
         this.m_LatePosition = this.m_Transform.position;
+        
+        this.m_PhysicVelocity = Vector3.zero;
     }
 
     public void LerpTargetPosition()
@@ -226,7 +227,7 @@ public class CMBody : MonoEntity,IWorldBody
 
         float lerp = Easing.Linear((Time.time - m_LastPositionFixedTime) / (Time.fixedDeltaTime));
         Vector3 pos = Vector3.Lerp(this.m_LatePosition, m_TargetPhysicPostion, lerp);
-        this.m_PhysicVelocity -= pos - m_Transform.position ;
+        //this.m_PhysicVelocity -= pos - m_Transform.position ;
         this.m_Transform.position = pos;
     }
 
@@ -302,13 +303,14 @@ public class CMBody : MonoEntity,IWorldBody
 
     private void GravtyUpdate()
     {
+        //Debug.LogError(this.transform.position.y + "当前坐标");
         if (!this.IsGrounded)
         {
-            m_WorldRule.ActiveBody(this);
+            m_WorldRule.AddGravityBuff(this);
         }
         else 
         {
-            m_WorldRule.NegtiveBody(this);
+            m_WorldRule.RemoveGravityBuff(this);
         }
     }
 

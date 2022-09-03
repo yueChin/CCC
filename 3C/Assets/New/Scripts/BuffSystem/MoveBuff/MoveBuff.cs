@@ -18,7 +18,6 @@ public class MoveBuff :Buff<CMBody>
     {
         base.OnEnable();
         
-        m_MoveEase.Enter(0.7f, 0.05f, Vector3.up);
         BTWaitUntilStopped stopped = new BTWaitUntilStopped();
         BTService service = new BTService(DoMove,stopped);
         BlackBoard bb = new BlackBoard(BuffSystem.BtTimeMenter);
@@ -36,7 +35,9 @@ public class MoveBuff :Buff<CMBody>
     {
         if (m_MoveEase.IsRunning)
         {
+            //Debug.LogError(m_MoveEase.EaseVelocity + " 移动向量");
             m_MoveEase.FixedUpdate();
+            //Debug.LogError("跳跃给移动向量" + m_MoveEase.EaseVelocity);
             BuffData1.Move(m_MoveEase.EaseVelocity);
         }
         else

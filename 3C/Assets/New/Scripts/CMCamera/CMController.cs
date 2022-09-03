@@ -43,6 +43,11 @@ public class CMController : MonoBehaviour
         NormalInptuState state = new NormalInptuState(0, "NormalInput");
         fsm.AddState(state);
         fsm.Init();
+        
+        BuffSystemManager buffSystemManager = GameLoop.Instace.GetFixedGameMoudle<BuffSystemManager>();
+        MoveBuffSystem buffSystem = buffSystemManager.FetchSystem<MoveBuffSystem>();
+        buffSystem.SetPriority(1);
+        buffSystemManager.AddBuffSystem(buffSystem);
     }
 
     public void SetMovementInput(Vector2 moveInput)
@@ -99,14 +104,15 @@ public class CMController : MonoBehaviour
         if (jump)
         {
             //this.m_JumpMove.Enter(0.7f, 0.05f, Vector3.up);
-            
-            BuffSystemManager buffSystemManager = GameLoop.Instace.GetGameMoudle<BuffSystemManager>();
-            MoveBuffSystem buffSystem = buffSystemManager.FetchSystem<MoveBuffSystem>();
-            buffSystem.SetPriority(1);
-            MoveBuff moveBuff = new MoveBuff(2,buffSystem,Body);
-            moveBuff.SetT(Body);
-            buffSystem.AddBuff(moveBuff);
-            buffSystemManager.AddBuffSystem(buffSystem);
+            Debug.LogError("跳跃输入");
+            if (!Body.HasBuff(2))
+            {
+                MoveBuffSystem buffSystem = GameLoop.Instace.GetFixedGameMoudle<BuffSystemManager>().FetchSystem<MoveBuffSystem>();
+                MoveBuff moveBuff = new MoveBuff(2,buffSystem,Body);
+                moveBuff.SetT(Body);
+                moveBuff.SetEaseEnter(0.7f, 0.05f, Vector3.up);
+                buffSystem.AddBuff(moveBuff);
+            }
         }
     }
 

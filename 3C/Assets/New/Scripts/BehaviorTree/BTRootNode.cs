@@ -11,7 +11,7 @@ public class BTRootNode : BTDecorator , ILifeCycle
     {
         BTEntryNode = node;
         BlckBoard = bb;
-        TimeMenter = GameLoop.Instace.GetGameMoudle<BTContent>().BtTimeMenter;
+        TimeMenter = GameLoop.Instace.GetFixedGameMoudle<BTContent>().BtTimeMenter;
         ChildNode.SetRoot(this);
     } 
     

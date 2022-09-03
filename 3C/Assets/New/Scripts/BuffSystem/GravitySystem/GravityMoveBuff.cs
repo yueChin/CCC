@@ -42,20 +42,19 @@ public class GravityMoveBuff :Buff<CMBody>
     {
         if(BuffData1.BodyFSM.CurtState.Type() == m_SkyType)
         {
+            //Debug.LogError(m_GrivityEase.EaseVelocity + "重力给向量");
+            m_GrivityEase.FixedUpdate();
+            BuffData1.Move(m_GrivityEase.EaseVelocity);
+        }
+        else if (BuffData1.BodyFSM.CurtState.Type() == m_GroudType)
+        {
             if (m_GrivityEase.IsRunning)
             {
-                m_GrivityEase.FixedUpdate();
-                BuffData1.Move(m_GrivityEase.EaseVelocity);
+                m_GrivityEase.Exit();
+                m_GrivityEase.Power = 0;
             }
+            //Debug.LogError("重力结束移除");
+            this.End();
         }
-        // else if (BuffData1.BodyFSM.CurtState.Type() == m_GroudType)
-        // {
-        //     if (m_GrivityEase.IsRunning)
-        //     {
-        //         m_GrivityEase.Exit();
-        //         m_GrivityEase.Power = 0;
-        //     }
-        //     this.End();
-        // }
     }
 }

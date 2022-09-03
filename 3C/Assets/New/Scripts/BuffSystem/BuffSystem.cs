@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class BuffSystem
 {
@@ -170,6 +171,8 @@ public class BuffSystem
 
     public void RemoveBuff(int buffId)
     {
+        // if(buffId == 1)
+        //     Debug.LogError("移除重力buff 指令");
         foreach (KeyValuePair<int, Buff> keyValuePair in AllBuffDict)
         {
             if (keyValuePair.Key == buffId)
