@@ -5,6 +5,7 @@
 using Cinemachine.Utility;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace Cinemachine
@@ -85,7 +86,7 @@ namespace Cinemachine
                 ICinemachineCamera vcam = LiveChild;
                 if (vcam == null)
                     return "(none)";
-                var sb = CinemachineDebug.SBFromPool();
+                StringBuilder sb = CinemachineDebug.SBFromPool();
                 sb.Append("["); sb.Append(vcam.Name); sb.Append("]");
                 string text = sb.ToString();
                 CinemachineDebug.ReturnToPool(sb);
@@ -143,7 +144,7 @@ namespace Cinemachine
         public override void OnTargetObjectWarped(Transform target, Vector3 positionDelta)
         {
             UpdateListOfChildren();
-            foreach (var vcam in m_ChildCameras)
+            foreach (CinemachineVirtualCameraBase vcam in m_ChildCameras)
                 vcam.OnTargetObjectWarped(target, positionDelta);
             base.OnTargetObjectWarped(target, positionDelta);
         }
@@ -156,7 +157,7 @@ namespace Cinemachine
         public override void ForceCameraPosition(Vector3 pos, Quaternion rot)
         {
             UpdateListOfChildren();
-            foreach (var vcam in m_ChildCameras)
+            foreach (CinemachineVirtualCameraBase vcam in m_ChildCameras)
                 vcam.ForceCameraPosition(pos, rot);
             base.ForceCameraPosition(pos, rot);
         }
@@ -293,7 +294,7 @@ namespace Cinemachine
                 CinemachineDebug.ReleaseScreenPos(this);
             else
             {
-                var sb = CinemachineDebug.SBFromPool();
+                StringBuilder sb = CinemachineDebug.SBFromPool();
                 sb.Append(Name); sb.Append(": "); sb.Append(Description);
                 string text = sb.ToString();
                 Rect r = CinemachineDebug.GetScreenPos(this, text, GUI.skin.box);
@@ -371,9 +372,9 @@ namespace Cinemachine
                 mCurrentInstruction = m_Instructions.Length - 1;
             }
 
-            var holdTime = m_Instructions[mCurrentInstruction].m_Hold 
-                + m_Instructions[mCurrentInstruction].m_Blend.BlendTime;
-            var minHold = mCurrentInstruction < m_Instructions.Length - 1 || m_Loop 
+            float holdTime = m_Instructions[mCurrentInstruction].m_Hold 
+                             + m_Instructions[mCurrentInstruction].m_Blend.BlendTime;
+            float minHold = mCurrentInstruction < m_Instructions.Length - 1 || m_Loop 
                 ? 0 : float.MaxValue;
             if (now - mActivationTime > Mathf.Max(minHold, holdTime))
             {

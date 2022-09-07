@@ -245,7 +245,7 @@ namespace Cinemachine
             {
                 List<List<Vector3>> list = new List<List<Vector3>>();
                 List<VcamExtraState> extraStates = GetAllExtraStates<VcamExtraState>();
-                foreach (var v in extraStates)
+                foreach (VcamExtraState v in extraStates)
                     if (v.debugResolutionPath != null && v.debugResolutionPath.Count > 0)
                         list.Add(v.debugResolutionPath);
                 return list;
@@ -274,7 +274,7 @@ namespace Cinemachine
         {
             if (stage == CinemachineCore.Stage.Body)
             {
-                var extra = GetExtraState<VcamExtraState>(vcam);
+                VcamExtraState extra = GetExtraState<VcamExtraState>(vcam);
                 extra.targetObscured = false;
                 extra.debugResolutionPath?.RemoveRange(0, extra.debugResolutionPath.Count);
             
@@ -322,7 +322,7 @@ namespace Cinemachine
                         extra.ResetDistanceSmoothing(m_SmoothingTime);
 
                     // Apply additional correction due to camera radius
-                    var cameraPos = state.CorrectedPosition + displacement;
+                    Vector3 cameraPos = state.CorrectedPosition + displacement;
                     displacement += RespectCameraRadius(
                         cameraPos, state.HasLookAt ? state.ReferenceLookAt : cameraPos);
 
@@ -342,7 +342,7 @@ namespace Cinemachine
             // Rate the shot after the aim was set
             if (stage == CinemachineCore.Stage.Aim)
             {
-                var extra = GetExtraState<VcamExtraState>(vcam);
+                VcamExtraState extra = GetExtraState<VcamExtraState>(vcam);
                 extra.targetObscured = IsTargetOffscreen(state) || CheckForTargetObstructions(state);
 
                 // GML these values are an initial arbitrary attempt at rating quality
@@ -460,7 +460,7 @@ namespace Cinemachine
             float clampedDistance = ClampRayToBounds(ray, distance, obstacle.collider.bounds);
             distance = Mathf.Min(distance, clampedDistance + k_PrecisionSlush);
 
-            if (RuntimeUtility.RaycastIgnoreTag(ray, out var hitInfo, distance,
+            if (RuntimeUtility.RaycastIgnoreTag(ray, out RaycastHit hitInfo, distance,
                     m_CollideAgainst & ~m_TransparentLayers, m_IgnoreTag))
             {
                 // We hit something.  Stop there and take a step along that wall.
@@ -584,7 +584,7 @@ namespace Cinemachine
             if (m_Strategy == ResolutionStrategy.PreserveCameraDistance)
                 return maxDistance;
 
-            if (!startPlane.Raycast(ray, out var distance))
+            if (!startPlane.Raycast(ray, out float distance))
                 distance = 0;
             distance = Mathf.Min(maxDistance, distance);
             if (distance < Epsilon)
@@ -671,7 +671,7 @@ namespace Cinemachine
             }
             if (numObstacles > 0 && distance == 0 || distance > m_MinimumDistanceFromTarget)
             {
-                var scratchCollider = RuntimeUtility.GetScratchCollider();
+                SphereCollider scratchCollider = RuntimeUtility.GetScratchCollider();
                 scratchCollider.radius = m_CameraRadius;
 
                 Vector3 newCamPos = cameraPos;
@@ -689,7 +689,7 @@ namespace Cinemachine
                         if (d > Epsilon)
                         {
                             dir /= d;
-                            var ray = new Ray(lookAtPos, dir);
+                            Ray ray = new Ray(lookAtPos, dir);
                             if (c.Raycast(ray, out hitInfo, d + m_CameraRadius))
                                 newCamPos = ray.GetPoint(hitInfo.distance) - (dir * k_PrecisionSlush);
                         }
@@ -697,7 +697,7 @@ namespace Cinemachine
                     if (Physics.ComputePenetration(
                         scratchCollider, newCamPos, Quaternion.identity,
                         c, c.transform.position, c.transform.rotation,
-                        out var offsetDir, out var offsetDistance))
+                        out Vector3 offsetDir, out float offsetDistance))
                     {
                         newCamPos += offsetDir * offsetDistance;
                     }

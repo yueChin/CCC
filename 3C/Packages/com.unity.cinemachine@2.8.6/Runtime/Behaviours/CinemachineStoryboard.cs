@@ -226,7 +226,7 @@ namespace Cinemachine
                         if (child != null && child.name == CanvasName)
                         {
                             ci.mCanvas = child.gameObject;
-                            var kids = ci.mCanvas.GetComponentsInChildren<RectTransform>();
+                            RectTransform[] kids = ci.mCanvas.GetComponentsInChildren<RectTransform>();
                             ci.mViewport = kids.Length > 1 ? kids[1] : null; // 0 is mCanvas
                             ci.mRawImage = ci.mCanvas.GetComponentInChildren<UnityEngine.UI.RawImage>();
                             ci.mCanvasComponent = ci.mCanvas.GetComponent<Canvas>();
@@ -251,13 +251,13 @@ namespace Cinemachine
             CanvasesAndTheirOwners.AddCanvas(ci.mCanvas, this);
 #endif
 
-            var c = ci.mCanvasComponent = ci.mCanvas.AddComponent<Canvas>();
+            Canvas c = ci.mCanvasComponent = ci.mCanvas.AddComponent<Canvas>();
             c.renderMode = (RenderMode) m_RenderMode;
             c.sortingOrder = m_SortingOrder;
             c.planeDistance = m_PlaneDistance;
             c.worldCamera = ci.mCanvasParent.OutputCamera;
 
-            var go = new GameObject("Viewport", typeof(RectTransform));
+            GameObject go = new GameObject("Viewport", typeof(RectTransform));
             go.transform.SetParent(ci.mCanvas.transform);
             ci.mViewport = (RectTransform)go.transform;
             go.AddComponent<UnityEngine.UI.RectMask2D>();
@@ -272,14 +272,14 @@ namespace Cinemachine
             int numBrains = CinemachineCore.Instance.BrainCount;
             for (int i = 0; i < numBrains; ++i)
             {
-                var parent = CinemachineCore.Instance.GetActiveBrain(i);
+                CinemachineBrain parent = CinemachineCore.Instance.GetActiveBrain(i);
                 int numChildren = parent.transform.childCount;
                 for (int j = numChildren - 1; j >= 0; --j)
                 {
                     RectTransform child = parent.transform.GetChild(j) as RectTransform;
                     if (child != null && child.name == CanvasName)
                     {
-                        var canvas = child.gameObject;
+                        GameObject canvas = child.gameObject;
                         RuntimeUtility.DestroyObject(canvas);
 #if UNITY_EDITOR
                         // Workaround for Unity bug case Case 1004117
@@ -360,7 +360,7 @@ namespace Cinemachine
             int numBlendables = state.NumCustomBlendables;
             for (int i = 0; i < numBlendables; ++i)
             {
-                var b = state.GetCustomBlendable(i);
+                CameraState.CustomBlendable b = state.GetCustomBlendable(i);
                 CinemachineStoryboard src = b.m_Custom as CinemachineStoryboard;
                 if (!(src == null)) // in case it was deleted
                 {
@@ -406,7 +406,7 @@ namespace Cinemachine
                 if (sCanvasesAndTheirOwners != null)
                 {
                     List<UnityEngine.Object> toDestroy = null;
-                    foreach (var v in sCanvasesAndTheirOwners)
+                    foreach (KeyValuePair<Object, Object> v in sCanvasesAndTheirOwners)
                     {
                         if (v.Value == null)
                         {
@@ -417,7 +417,7 @@ namespace Cinemachine
                     }
                     if (toDestroy != null)
                     {
-                        foreach (var o in toDestroy)
+                        foreach (Object o in toDestroy)
                         {
                             RemoveCanvas(o);
                             RuntimeUtility.DestroyObject(o);

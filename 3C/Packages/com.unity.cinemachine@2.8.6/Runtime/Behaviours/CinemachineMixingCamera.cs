@@ -145,7 +145,7 @@ namespace Cinemachine
         public override void OnTargetObjectWarped(Transform target, Vector3 positionDelta)
         {
             ValidateListOfChildren();
-            foreach (var vcam in m_ChildCameras)
+            foreach (CinemachineVirtualCameraBase vcam in m_ChildCameras)
                 vcam.OnTargetObjectWarped(target, positionDelta);
             base.OnTargetObjectWarped(target, positionDelta);
         }
@@ -158,7 +158,7 @@ namespace Cinemachine
         public override void ForceCameraPosition(Vector3 pos, Quaternion rot)
         {
             ValidateListOfChildren();
-            foreach (var vcam in m_ChildCameras)
+            foreach (CinemachineVirtualCameraBase vcam in m_ChildCameras)
                 vcam.ForceCameraPosition(pos, rot);
             base.ForceCameraPosition(pos, rot);
         }

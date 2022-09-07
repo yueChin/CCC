@@ -51,7 +51,7 @@ public class WorldRule : IGameMoudle
     {
         if (!body.HasBuff(1))
         {
-            Debug.LogError("增加重力");
+            //Debug.LogError("增加重力");
             GravityMoveBuffSystem buffSystem = GameLoop.Instace.GetFixedGameMoudle<BuffSystemManager>().FetchSystem<GravityMoveBuffSystem>();
             GravityMoveBuff gravityBuff = new GravityMoveBuff(1,buffSystem,body);
             gravityBuff.SetT(body);

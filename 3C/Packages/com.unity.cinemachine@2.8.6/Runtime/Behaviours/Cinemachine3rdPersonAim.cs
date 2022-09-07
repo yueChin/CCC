@@ -86,10 +86,10 @@ namespace Cinemachine
         Vector3 ComputeLookAtPoint(Vector3 camPos, Transform player)
         {
             // We don't want to hit targets behind the player
-            var aimDistance = AimDistance;
-            var playerOrientation = player.rotation;
-            var fwd = playerOrientation * Vector3.forward;
-            var playerPos = Quaternion.Inverse(playerOrientation) * (player.position - camPos);
+            float aimDistance = AimDistance;
+            Quaternion playerOrientation = player.rotation;
+            Vector3 fwd = playerOrientation * Vector3.forward;
+            Vector3 playerPos = Quaternion.Inverse(playerOrientation) * (player.position - camPos);
             if (playerPos.z > 0)
             {
                 camPos += fwd * playerPos.z;
@@ -105,8 +105,8 @@ namespace Cinemachine
         Vector3 ComputeAimTarget(Vector3 cameraLookAt, Transform player)
         {
             // Adjust for actual player aim target (may be different due to offset)
-            var playerPos = player.position;
-            var dir = cameraLookAt - playerPos;
+            Vector3 playerPos = player.position;
+            Vector3 dir = cameraLookAt - playerPos;
             if (RuntimeUtility.RaycastIgnoreTag(new Ray(playerPos, dir), 
                 out RaycastHit hitInfo, dir.magnitude, AimCollisionFilter, IgnoreTag))
                 return hitInfo.point;
@@ -128,7 +128,7 @@ namespace Cinemachine
             if (stage == CinemachineCore.Stage.Body)
             {
                 // Raycast to establish what we're actually aiming at
-                var player = vcam.Follow;
+                Transform player = vcam.Follow;
                 if (player != null)
                 {
                     state.ReferenceLookAt = ComputeLookAtPoint(state.CorrectedPosition, player);
@@ -138,7 +138,7 @@ namespace Cinemachine
             if (stage == CinemachineCore.Stage.Finalize)
             {
                 // Stabilize the LookAt point in the center of the screen
-                var dir = state.ReferenceLookAt - state.FinalPosition;
+                Vector3 dir = state.ReferenceLookAt - state.FinalPosition;
                 if (dir.sqrMagnitude > 0.01f)
                 {
                     state.RawOrientation = Quaternion.LookRotation(dir, state.ReferenceUp);

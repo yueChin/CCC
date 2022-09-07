@@ -195,7 +195,7 @@ namespace Cinemachine
         {
             m_XAxis.SetInputAxisProvider(0, null);
             m_YAxis.SetInputAxisProvider(1, null);
-            var provider = GetInputAxisProvider();
+            AxisState.IInputAxisProvider provider = GetInputAxisProvider();
             if (provider != null)
             {
                 m_XAxis.SetInputAxisProvider(0, provider);
@@ -209,7 +209,7 @@ namespace Cinemachine
         {
             // Make the rigs visible instead of destroying - this is to keep Undo happy
             if (m_Rigs != null)
-                foreach (var rig in m_Rigs)
+                foreach (CinemachineVirtualCamera rig in m_Rigs)
                     if (rig != null && rig.gameObject != null)
                         rig.gameObject.hideFlags
                             &= ~(HideFlags.HideInHierarchy | HideFlags.HideInInspector);
@@ -280,7 +280,7 @@ namespace Cinemachine
             // Do not update the rig cache here or there will be infinite loop at creation time
             if (m_Rigs == null || m_Rigs.Length != 3)
                 return false;
-            var y = GetYAxisValue();
+            float y = GetYAxisValue();
             if (dominantChildOnly)
             {
                 if (vcam == (ICinemachineCamera)m_Rigs[0])
@@ -307,7 +307,7 @@ namespace Cinemachine
         {
             UpdateRigCache();
             if (m_Rigs != null)
-                foreach (var vcam in m_Rigs)
+                foreach (CinemachineVirtualCamera vcam in m_Rigs)
                     vcam.OnTargetObjectWarped(target, positionDelta);
             base.OnTargetObjectWarped(target, positionDelta);
         }
@@ -320,7 +320,7 @@ namespace Cinemachine
         /// <param name="rot">Worldspace orientation to take</param>
         public override void ForceCameraPosition(Vector3 pos, Quaternion rot)
         {
-            var up = State.ReferenceUp;
+            Vector3 up = State.ReferenceUp;
             m_YAxis.Value = GetYAxisClosestValue(pos, up);
 
             PreviousStateIsValid = true;
@@ -400,13 +400,13 @@ namespace Cinemachine
             if (fromCam != null && m_Transitions.m_InheritPosition 
                 && !CinemachineCore.Instance.IsLiveInBlend(this))
             {
-                var cameraPos = fromCam.State.RawPosition;
+                Vector3 cameraPos = fromCam.State.RawPosition;
 
                 // Special handling for FreeLook: get an undamped outgoing position
                 if (fromCam is CinemachineFreeLook)
                 {
-                    var flFrom = (fromCam as CinemachineFreeLook);
-                    var orbital = flFrom.mOrbitals != null ? flFrom.mOrbitals[1] : null;
+                    CinemachineFreeLook flFrom = (fromCam as CinemachineFreeLook);
+                    CinemachineOrbitalTransposer orbital = flFrom.mOrbitals != null ? flFrom.mOrbitals[1] : null;
                     if (orbital != null)
                         cameraPos = orbital.GetTargetCameraPosition(worldUp);
                 }
@@ -607,7 +607,7 @@ namespace Cinemachine
             {
                 if (!isPrefab) // can't paste to a prefab
                 {
-                    var copyFrom = m_Rigs;
+                    CinemachineVirtualCamera[] copyFrom = m_Rigs;
                     DestroyRigs();
                     m_Rigs = CreateRigs(copyFrom);
                 }
@@ -627,7 +627,7 @@ namespace Cinemachine
             }
 
 #if UNITY_EDITOR
-            foreach (var rig in m_Rigs)
+            foreach (CinemachineVirtualCamera rig in m_Rigs)
             {
                 // Configure the UI
                 if (rig == null)
@@ -689,7 +689,7 @@ namespace Cinemachine
                 return 0; // deleted
             if (mOrbitals != null && mOrbitals[1] == orbital)
             {
-                var oldValue = m_XAxis.Value;
+                float oldValue = m_XAxis.Value;
                 m_CachedXAxisHeading = orbital.UpdateHeading(
                     PreviousStateIsValid ? deltaTime : -1, up,
                     ref m_XAxis, ref m_RecenterToTargetHeading,

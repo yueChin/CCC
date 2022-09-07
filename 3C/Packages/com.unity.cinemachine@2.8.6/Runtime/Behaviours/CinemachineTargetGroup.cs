@@ -168,7 +168,7 @@ namespace Cinemachine
             else
             {
                 index = m_Targets.Length;
-                var oldTargets = m_Targets;
+                Target[] oldTargets = m_Targets;
                 m_Targets = new Target[index + 1];
                 Array.Copy(oldTargets, m_Targets, index);
             }
@@ -184,7 +184,7 @@ namespace Cinemachine
             int index = FindMember(t);
             if (index >= 0)
             {
-                var oldTargets = m_Targets;
+                Target[] oldTargets = m_Targets;
                 m_Targets = new Target[m_Targets.Length - 1];
                 if (index > 0)
                     Array.Copy(oldTargets, m_Targets, index);
@@ -294,7 +294,7 @@ namespace Cinemachine
         /// <returns>An approximate bounding sphere.  Will be slightly large.</returns>
         BoundingSphere CalculateBoundingSphere(float maxWeight)
         {
-            var sphere = new BoundingSphere { position = transform.position };
+            BoundingSphere sphere = new BoundingSphere { position = transform.position };
             bool gotOne = false;
 
             for (int i = 0; i < m_Targets.Length; ++i)
@@ -308,7 +308,7 @@ namespace Cinemachine
                     sphere = s;
                     continue;
                 }
-                var distance = (s.position - sphere.position).magnitude + s.radius;
+                float distance = (s.position - sphere.position).magnitude + s.radius;
                 if (distance > sphere.radius)
                 {
                     // Point is outside current sphere: update
@@ -321,7 +321,7 @@ namespace Cinemachine
 
         Vector3 CalculateAveragePosition(out float maxWeight)
         {
-            var pos = Vector3.zero;
+            Vector3 pos = Vector3.zero;
             float weight = 0;
             maxWeight = 0;
             for (int i = 0; i < m_Targets.Length; ++i)
@@ -354,8 +354,8 @@ namespace Cinemachine
             {
                 if (m_Targets[i].target != null)
                 {
-                    var scaledWeight = m_Targets[i].weight / m_MaxWeight;
-                    var rot = TargetPositionCache.GetTargetRotation(m_Targets[i].target);
+                    float scaledWeight = m_Targets[i].weight / m_MaxWeight;
+                    Quaternion rot = TargetPositionCache.GetTargetRotation(m_Targets[i].target);
                     r *= Quaternion.Slerp(Quaternion.identity, rot, scaledWeight);
                     weightedAverage += scaledWeight;
                 }
@@ -372,7 +372,7 @@ namespace Cinemachine
                 {
                     if (m_Targets[i].target != null)
                     {
-                        var s = WeightedMemberBounds(m_Targets[i], m_AveragePos, maxWeight);
+                        BoundingSphere s = WeightedMemberBounds(m_Targets[i], m_AveragePos, maxWeight);
                         b.Encapsulate(new Bounds(s.position, s.radius * 2 * Vector3.one));
                     }
                 }
@@ -431,9 +431,9 @@ namespace Cinemachine
                 if (p.z < UnityVectorExtensions.Epsilon)
                     continue; // behind us
 
-                var r = s.radius / p.z;
-                var r2 = new Vector3(r, r, 0);
-                var p2 = p / p.z;
+                float r = s.radius / p.z;
+                Vector3 r2 = new Vector3(r, r, 0);
+                Vector3 p2 = p / p.z;
                 if (!haveOne)
                 {
                     b.center = p2;
@@ -451,8 +451,8 @@ namespace Cinemachine
             }
 
             // Don't need the high-precision versions of SignedAngle
-            var pMin = b.min;
-            var pMax = b.max;
+            Vector3 pMin = b.min;
+            Vector3 pMax = b.max;
             minAngles = new Vector2(
                 Vector3.SignedAngle(Vector3.forward, new Vector3(0, pMin.y, 1), Vector3.left),
                 Vector3.SignedAngle(Vector3.forward, new Vector3(pMin.x, 0, 1), Vector3.up));

@@ -104,7 +104,7 @@ public class CMController : MonoBehaviour
         if (jump)
         {
             //this.m_JumpMove.Enter(0.7f, 0.05f, Vector3.up);
-            Debug.LogError("跳跃输入");
+            //Debug.LogError("跳跃输入");
             if (!Body.HasBuff(2))
             {
                 MoveBuffSystem buffSystem = GameLoop.Instace.GetFixedGameMoudle<BuffSystemManager>().FetchSystem<MoveBuffSystem>();

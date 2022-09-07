@@ -31,7 +31,7 @@ namespace Cinemachine
             if (stage != CinemachineCore.Stage.Body)
                 return;
 
-            var brain = CinemachineCore.Instance.FindPotentialTargetBrain(vcam);
+            CinemachineBrain brain = CinemachineCore.Instance.FindPotentialTargetBrain(vcam);
             if (brain == null || !brain.IsLive(vcam))
                 return;
 
@@ -49,7 +49,7 @@ namespace Cinemachine
                 return;
 #endif
 
-            var lens = state.Lens;
+            LensSettings lens = state.Lens;
             lens.OrthographicSize = pixelPerfectCamera.CorrectCinemachineOrthoSize(lens.OrthographicSize);
             state.Lens = lens;
         }

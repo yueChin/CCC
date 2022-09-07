@@ -60,7 +60,7 @@ public class CinemachineCameraOffset : CinemachineExtension
                 state.ReferenceLookAt += offset;
             else
             {
-                var q = Quaternion.LookRotation(
+                Quaternion q = Quaternion.LookRotation(
                     state.ReferenceLookAt - state.CorrectedPosition, state.ReferenceUp);
                 q = q.ApplyCameraRotation(-screenOffset, state.ReferenceUp);
                 state.RawOrientation = q;

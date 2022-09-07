@@ -138,7 +138,7 @@ namespace Cinemachine
         {
             if (IsValid && stage == CinemachineCore.Stage.Body)
             {
-                var extra = GetExtraState<VcamExtraState>(vcam);
+                VcamExtraState extra = GetExtraState<VcamExtraState>(vcam);
                 Vector3 displacement;
                 if (m_ConfineScreenEdges && state.Lens.Orthographic)
                     displacement = ConfineScreenEdges(vcam, ref state);
@@ -204,7 +204,7 @@ namespace Cinemachine
                 {
                     m_pathCache = new List<List<Vector2>>();
                     Vector2[] path = new Vector2[poly.pointCount];
-                    var lossyScale = m_BoundingShape2D.transform.lossyScale;
+                    Vector3 lossyScale = m_BoundingShape2D.transform.lossyScale;
                     Vector2 revertCompositeColliderScale = new Vector2(
                         1f / lossyScale.x, 
                         1f / lossyScale.y);

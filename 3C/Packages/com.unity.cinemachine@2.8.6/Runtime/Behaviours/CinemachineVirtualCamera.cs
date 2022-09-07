@@ -325,7 +325,7 @@ namespace Cinemachine
         {
             CinemachineComponentBase[] components = GetComponentPipeline();
             if (components != null)
-                foreach (var c in components)
+                foreach (CinemachineComponentBase c in components)
                     if (c.Stage == stage)
                         return c;
             return null;
@@ -338,7 +338,7 @@ namespace Cinemachine
         {
             CinemachineComponentBase[] components = GetComponentPipeline();
             if (components != null)
-                foreach (var c in components)
+                foreach (CinemachineComponentBase c in components)
                     if (c is T)
                         return c as T;
             return null;
@@ -381,7 +381,7 @@ namespace Cinemachine
             CinemachineComponentBase[] components = GetComponentPipeline();
             if (components != null)
             {
-                foreach (var c in components)
+                foreach (CinemachineComponentBase c in components)
                 {
                     if (c is T)
                     {
@@ -498,7 +498,7 @@ namespace Cinemachine
             if (m_ComponentPipeline == null)
             {
                 state.BlendHint |= CameraState.BlendHintValue.IgnoreLookAtTarget;
-                for (var stage = CinemachineCore.Stage.Body; stage <= CinemachineCore.Stage.Finalize; ++stage)
+                for (CinemachineCore.Stage stage = CinemachineCore.Stage.Body; stage <= CinemachineCore.Stage.Finalize; ++stage)
                     InvokePostPipelineStageCallback(this, stage, ref state, deltaTime);
             }
             else
@@ -509,9 +509,9 @@ namespace Cinemachine
 
                 int componentIndex = 0;
                 CinemachineComponentBase postAimBody = null;
-                for (var stage = CinemachineCore.Stage.Body; stage <= CinemachineCore.Stage.Finalize; ++stage)
+                for (CinemachineCore.Stage stage = CinemachineCore.Stage.Body; stage <= CinemachineCore.Stage.Finalize; ++stage)
                 {
-                    var c = componentIndex < m_ComponentPipeline.Length 
+                    CinemachineComponentBase c = componentIndex < m_ComponentPipeline.Length 
                         ? m_ComponentPipeline[componentIndex] : null;
                     if (c != null && stage == c.Stage)
                     {

@@ -96,12 +96,12 @@ public class CinemachineRecomposer : CinemachineExtension
     {
         if (stage == m_ApplyAfter)
         {
-            var lens = state.Lens;
+            LensSettings lens = state.Lens;
 
             // Tilt by local X
-            var qTilted = state.RawOrientation * Quaternion.AngleAxis(m_Tilt, Vector3.right);
+            Quaternion qTilted = state.RawOrientation * Quaternion.AngleAxis(m_Tilt, Vector3.right);
             // Pan in world space
-            var qDesired = Quaternion.AngleAxis(m_Pan, state.ReferenceUp) * qTilted;
+            Quaternion qDesired = Quaternion.AngleAxis(m_Pan, state.ReferenceUp) * qTilted;
             state.OrientationCorrection = Quaternion.Inverse(state.CorrectedOrientation) * qDesired;
             // And dutch at the end
             lens.Dutch += m_Dutch;

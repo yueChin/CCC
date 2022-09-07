@@ -120,22 +120,22 @@ namespace Cinemachine
         {
             if (stage == CinemachineCore.Stage.Body)
             {
-                var aspectRatio = state.Lens.Aspect;
+                float aspectRatio = state.Lens.Aspect;
                 if (!m_shapeCache.ValidateCache(
                     m_BoundingShape2D, m_MaxWindowSize, aspectRatio, out bool confinerStateChanged))
                 {
                     return; // invalid path
                 }
                 
-                var oldCameraPos = state.CorrectedPosition;
-                var cameraPosLocal = m_shapeCache.m_DeltaWorldToBaked.MultiplyPoint3x4(oldCameraPos);
-                var currentFrustumHeight = CalculateHalfFrustumHeight(state, cameraPosLocal.z);
+                Vector3 oldCameraPos = state.CorrectedPosition;
+                Vector3 cameraPosLocal = m_shapeCache.m_DeltaWorldToBaked.MultiplyPoint3x4(oldCameraPos);
+                float currentFrustumHeight = CalculateHalfFrustumHeight(state, cameraPosLocal.z);
                 // convert frustum height from world to baked space. deltaWorldToBaked.lossyScale is always uniform.
-                var bakedSpaceFrustumHeight = currentFrustumHeight * 
-                                              m_shapeCache.m_DeltaWorldToBaked.lossyScale.x;
+                float bakedSpaceFrustumHeight = currentFrustumHeight * 
+                                                m_shapeCache.m_DeltaWorldToBaked.lossyScale.x;
 
                 // Make sure we have a solution for our current frustum size
-                var extra = GetExtraState<VcamExtraState>(vcam);
+                VcamExtraState extra = GetExtraState<VcamExtraState>(vcam);
                 extra.m_vcam = vcam;
                 if (confinerStateChanged || extra.m_BakedSolution == null 
                     || !extra.m_BakedSolution.IsValid(bakedSpaceFrustumHeight))
@@ -144,15 +144,15 @@ namespace Cinemachine
                 }
 
                 cameraPosLocal = extra.m_BakedSolution.ConfinePoint(cameraPosLocal);
-                var newCameraPos = m_shapeCache.m_DeltaBakedToWorld.MultiplyPoint3x4(cameraPosLocal);
+                Vector3 newCameraPos = m_shapeCache.m_DeltaBakedToWorld.MultiplyPoint3x4(cameraPosLocal);
 
                 // Don't move the camera along its z-axis
-                var fwd = state.CorrectedOrientation * Vector3.forward;
+                Vector3 fwd = state.CorrectedOrientation * Vector3.forward;
                 newCameraPos -= fwd * Vector3.Dot(fwd, newCameraPos - oldCameraPos);
 
                 // Remember the desired displacement for next frame
-                var prev = extra.m_PreviousDisplacement;
-                var displacement = newCameraPos - oldCameraPos;
+                Vector3 prev = extra.m_PreviousDisplacement;
+                Vector3 displacement = newCameraPos - oldCameraPos;
                 extra.m_PreviousDisplacement = displacement;
 
                 if (!VirtualCamera.PreviousStateIsValid || deltaTime < 0 || m_Damping <= 0)
@@ -341,8 +341,8 @@ namespace Cinemachine
             {
                 // Account for current collider offset (in local space) and 
                 // incorporate the worldspace delta that the confiner has moved since baking
-                var m = Matrix4x4.Translate(-m_boundingShape2D.offset) * 
-                        m_boundingShape2D.transform.worldToLocalMatrix;
+                Matrix4x4 m = Matrix4x4.Translate(-m_boundingShape2D.offset) * 
+                              m_boundingShape2D.transform.worldToLocalMatrix;
                 m_DeltaWorldToBaked = m_bakedToWorld * m;
                 m_DeltaBakedToWorld = m_DeltaWorldToBaked.inverse;
             }
@@ -358,10 +358,10 @@ namespace Cinemachine
             originalPath = m_shapeCache.m_OriginalPath;
             pathLocalToWorld = m_shapeCache.m_DeltaBakedToWorld;
             currentPath.Clear();
-            var allExtraStates = GetAllExtraStates<VcamExtraState>();
+            List<VcamExtraState> allExtraStates = GetAllExtraStates<VcamExtraState>();
             for (int i = 0; i < allExtraStates.Count; ++i)
             {
-                var e = allExtraStates[i];
+                VcamExtraState e = allExtraStates[i];
                 if (e.m_BakedSolution != null)
                 {
                     currentPath.AddRange(e.m_BakedSolution.GetBakedPath());

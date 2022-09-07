@@ -5,6 +5,7 @@
 using Cinemachine.Utility;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace Cinemachine
@@ -138,7 +139,7 @@ namespace Cinemachine
                 ICinemachineCamera vcam = LiveChild;
                 if (vcam == null)
                     return "(none)";
-                var sb = CinemachineDebug.SBFromPool();
+                StringBuilder sb = CinemachineDebug.SBFromPool();
                 sb.Append("["); sb.Append(vcam.Name); sb.Append("]");
                 string text = sb.ToString();
                 CinemachineDebug.ReturnToPool(sb);
@@ -186,7 +187,7 @@ namespace Cinemachine
         public override void OnTargetObjectWarped(Transform target, Vector3 positionDelta)
         {
             UpdateListOfChildren();
-            foreach (var vcam in m_ChildCameras)
+            foreach (CinemachineVirtualCameraBase vcam in m_ChildCameras)
                 vcam.OnTargetObjectWarped(target, positionDelta);
             base.OnTargetObjectWarped(target, positionDelta);
         }
@@ -199,7 +200,7 @@ namespace Cinemachine
         public override void ForceCameraPosition(Vector3 pos, Quaternion rot)
         {
             UpdateListOfChildren();
-            foreach (var vcam in m_ChildCameras)
+            foreach (CinemachineVirtualCameraBase vcam in m_ChildCameras)
                 vcam.ForceCameraPosition(pos, rot);
             base.ForceCameraPosition(pos, rot);
         }
@@ -317,7 +318,7 @@ namespace Cinemachine
                 CinemachineDebug.ReleaseScreenPos(this);
             else
             {
-                var sb = CinemachineDebug.SBFromPool();
+                StringBuilder sb = CinemachineDebug.SBFromPool();
                 sb.Append(Name); sb.Append(": "); sb.Append(Description);
                 string text = sb.ToString();
                 Rect r = CinemachineDebug.GetScreenPos(this, text, GUI.skin.box);
@@ -410,7 +411,7 @@ namespace Cinemachine
             // Create the parent lookup
             mStateParentLookup = new Dictionary<int, int>();
             if (m_ParentHash != null)
-                foreach (var i in m_ParentHash)
+                foreach (ParentHash i in m_ParentHash)
                     mStateParentLookup[i.m_Hash] = i.m_ParentHash;
 
             // Zap the cached current instructions
